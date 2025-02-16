@@ -62,11 +62,15 @@ def main():
     project_id = 'microblog-dao'
     example_interface_classname = 'MicroblogDao'
     example_interface = textwrap.dedent('''
-        class MicroblogDao:
+        from abc import ABC, abstractmethod
+
+        class MicroblogDao(ABC):
+            @abstractmethod
             def post(self, user_id: str, post_content: str) -> str:
                 """Stores the post in the database, returning the post ID."""
                 pass
 
+            @abstractmethod
             def delete_post(self, post_id: str) -> None:
                 """Deletes the given post. Raises ValueError if post is not found."""
                 pass
@@ -74,18 +78,14 @@ def main():
 
     filename_prefix = camel_to_snake(example_interface_classname)
     project_dir = os.path.join('output', project_id)
-    os.makedirs(os.path.join(project_dir, 'interfaces'), exist_ok=True)
+    os.makedirs(project_dir, exist_ok=True)
     
-    iface_package_path = os.path.join('output', project_id, 'interfaces', '__init__.py')
-    iface_path = os.path.join(project_dir, 'interfaces', filename_prefix + '.py')
+    iface_path = os.path.join(project_dir, filename_prefix + '.py')
     test_path = os.path.join(project_dir, filename_prefix + '_test.py')    
     impl_path = os.path.join(project_dir, filename_prefix + '_impl.py')
 
     test_gen = test_generator.TestGenerator()
     impl_gen = impl_generator.ImplGenerator()
-
-    with open(iface_package_path, 'w') as iface_package_file:
-        iface_package_file.write('')
 
     with open(iface_path, 'w') as iface_file:
         iface_file.write(example_interface)

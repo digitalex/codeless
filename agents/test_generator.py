@@ -18,7 +18,7 @@ class TestGenerator:
     def _make_prompt(self, python_interface: str) -> str:
         example_test = textwrap.dedent('''
             import unittest
-            from interfaces.my_interface import MyInterface
+            from my_interface import MyInterface
             from my_interface_impl import MyInterfaceImpl
 
             class MyInterfaceTest(unittest.TestCase):
@@ -35,10 +35,10 @@ s
         return (
             'Generate a test suite for the following code. '
             'The test suite should be a class that inherits from `unittest.TestCase`, '
-            'and can assume an implementation of the interface already exists, and it is in the same package as the test being generated - meaning there is no need to import it. '
-            'The `setUp` method always instantiates an implementation of the interface, and they are always named like this: '
-            'Interface: `interfaces.FooInterface`. Impl: `FooInterfaceImpl`. '
-            'Never include the interface or the implementation itself in the output, these will be provided elsewhere. '
+            'and can assume an implementation of the interface already exists, and it is in the same directory as the test being generated. '
+            'The `setUp` method always instantiates an implementation of the interface. '
+            # 'Interface: `example.Example`. Impl: `example_impl.ExampleImpl`. '
+            'Never include the interface or the implementation itself in the output, these will be provided for you. '
             'Here is an example output for a hypothetical interface called `MyInterface`:\n'
             f'{utils.wrap_code_in_markdown(example_test)}'
             'Now generate a test suite in the same style, for testing the interface provided below '
@@ -63,15 +63,20 @@ if __name__ == "__main__":
     load_dotenv()
 
     example_interface = textwrap.dedent('''
-        class Calculator:
+        from abc import ABC, abstractmethod
+
+        class Calculator(ABC):
+            @abstractmethod
             def add(a: int, b: int) -> int:
                 """Adds a and b"""
                 pass
 
+            @abstractmethod
             def subtract(a: int, b: int) -> int:
                 """Subtracts b from a"""
                 pass
 
+            @abstractmethod
             def product(a: int, b: int) -> int:
                 """Returns the product of a and b"""
                 pass

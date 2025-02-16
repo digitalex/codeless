@@ -17,7 +17,7 @@ class ImplGenerator:
 
     def _make_initial_prompt(self, python_interface: str) -> str:
         example_impl = textwrap.dedent('''
-            from interfaces.my_interface import MyInterface
+            from my_interface import MyInterface
 
             class MyInterfaceImpl(MyInterface):
                 def __init__(self, message: str):
@@ -32,13 +32,15 @@ class ImplGenerator:
             'Generate an implementation of the following python interface:\n\n'
             f'{utils.wrap_code_in_markdown(python_interface)}'
             'Make sure the name of the class ends with "Impl", and it inherits from the interface. '
-            'You can assume the interface exists in a package named `interfaces`, like in the following example:\n\n'
+            'The code you will generate is *not* an abstract class, and does *not* have any `@abstractmethod` annotations. '
+            'The interface itself already exists in the same directory, so do not add it here. '
+            'An example implementation might look something like this:\n\n'
             f'{utils.wrap_code_in_markdown(example_impl)}'
         )
 
     def _make_improvement_prompt(self, python_interface: str, test_str: str, previous_impl: str, test_output: str) -> str:
         example_impl = textwrap.dedent('''
-            from interfaces.my_interface import MyInterface
+            from my_interface import MyInterface
 
             class MyInterfaceImpl(MyInterface):
                 def __init__(self, message: str):
@@ -55,7 +57,7 @@ class ImplGenerator:
             'Your response was as follows:\n\n'
             f'{utils.wrap_code_in_markdown(previous_impl)}'
             'Your instructions were to make sure the name of the class ends with "Impl", and it inherits from the interface. '
-            'You can assume the interface exists in a package named `interfaces`. '
+            'You can assume the interface exists the same directory as the implementation being generated. '
             'The test suite that was run looks like this:\n'
             f'{utils.wrap_code_in_markdown(test_str)}'
             'When the tests were run, the following output indicates some problems:'
@@ -85,15 +87,21 @@ if __name__ == "__main__":
     load_dotenv()
 
     example_interface = textwrap.dedent('''
-        class Calculator:
+        from abc import ABC, abstractmethod
+
+        class Calculator(ABC):
+
+            @abstractmethod
             def add(a: int, b: int) -> int:
                 """Adds a and b"""
                 pass
 
+            @abstractmethod
             def subtract(a: int, b: int) -> int:
                 """Subtracts b from a"""
                 pass
 
+            @abstractmethod
             def product(a: int, b: int) -> int:
                 """Returns the product of a and b"""
                 pass
