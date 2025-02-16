@@ -59,22 +59,40 @@ def main():
     #             pass
     #     ''')
 
-    project_id = 'microblog-dao'
-    example_interface_classname = 'MicroblogDao'
+    # project_id = 'microblog-dao'
+    # example_interface_classname = 'MicroblogDao'
+    # example_interface = textwrap.dedent('''
+    #     from abc import ABC, abstractmethod
+
+    #     class MicroblogDao(ABC):
+    #         @abstractmethod
+    #         def post(self, user_id: str, post_content: str) -> str:
+    #             """Stores the post in the database, returning the post ID."""
+    #             pass
+
+    #         @abstractmethod
+    #         def delete_post(self, post_id: str) -> None:
+    #             """Deletes the given post. Raises ValueError if post is not found."""
+    #             pass
+    #     ''')
+
+    project_id = 'math-utils'
+    example_interface_classname = 'MathUtils'
     example_interface = textwrap.dedent('''
         from abc import ABC, abstractmethod
 
-        class MicroblogDao(ABC):
+        class MathUtils(ABC):
             @abstractmethod
-            def post(self, user_id: str, post_content: str) -> str:
-                """Stores the post in the database, returning the post ID."""
+            def fibonacci(self, n: int) -> int:
+                """An optimal implementation that returns the Nth fibonacci number."""
                 pass
 
             @abstractmethod
-            def delete_post(self, post_id: str) -> None:
-                """Deletes the given post. Raises ValueError if post is not found."""
+            def gcd(self, nums: list[int]) -> int:
+                """Returns the largest positive integer that can divide each of input numbers without a remainder."""
                 pass
         ''')
+
 
     filename_prefix = camel_to_snake(example_interface_classname)
     project_dir = os.path.join('output', project_id)
@@ -96,16 +114,32 @@ def main():
     
     if not tests_pass:
         print(test_output)
-    
-    while not tests_pass:
-        print('Tests did not pass, trying another round of impl generation.')
-        new_impl_str = impl_gen.str_to_str(example_interface, impl_str, test_str, test_output)
-        with open(impl_path, 'w') as impl_file:
-            impl_file.write(new_impl_str)
 
+    num_test_rounds = 3
+    num_impl_rounds = 5
+    while not tests_pass and num_test_rounds > 0:
+        while not tests_pass and num_impl_rounds > 0:
+            print('Tests did not pass, trying another round of impl generation.')
+            new_impl_str = impl_gen.str_to_str(example_interface, impl_str, test_str, test_output)
+            with open(impl_path, 'w') as impl_file:
+                impl_file.write(new_impl_str)
+
+            tests_pass, test_output = run_tests(project_dir)
+            num_impl_rounds -= 1
+        
+        if tests_pass:
+            break
+        print('Could not make tests pass after 5 attempts, will regenerate tests instead')
+        test_str = test_gen.str_to_file(example_interface, test_path)
         tests_pass, test_output = run_tests(project_dir)
+        num_impl_rounds = 5
+        num_test_rounds -= 1
 
-    print('All tests pass!')
+
+    if num_test_rounds > 0:
+        print('All done!')
+    else:
+        print('Unable to solve this after 15 attempts.')
 
 
 if __name__ == "__main__":
