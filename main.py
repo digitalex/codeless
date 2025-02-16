@@ -76,23 +76,52 @@ def main():
     #             pass
     #     ''')
 
-    project_id = 'math-utils'
-    example_interface_classname = 'MathUtils'
+    # project_id = 'math-utils'
+    # example_interface_classname = 'MathUtils'
+    # example_interface = textwrap.dedent('''
+    #     from abc import ABC, abstractmethod
+
+    #     class MathUtils(ABC):
+    #         @abstractmethod
+    #         def fibonacci(self, n: int) -> int:
+    #             """An optimal implementation that returns the Nth fibonacci number."""
+    #             pass
+
+    #         @abstractmethod
+    #         def gcd(self, nums: list[int]) -> int:
+    #             """Returns the largest positive integer that can divide each of input numbers without a remainder."""
+    #             pass
+    #     ''')
+
+    project_id = 'snake-game-engine'
+    example_interface_classname = 'SnakeGameEngine'
     example_interface = textwrap.dedent('''
         from abc import ABC, abstractmethod
 
-        class MathUtils(ABC):
-            @abstractmethod
-            def fibonacci(self, n: int) -> int:
-                """An optimal implementation that returns the Nth fibonacci number."""
+        class SnakeGameEngine(ABC):
+            """A game engine for the classic Snake game. This calculates the state of the board at each tick.
+            
+            The board is a rectangle. There is no food for the snake, which means it will never grow.
+            
+            It is assumed that the snake moves forward in its current direction at a speed of one position per tick.
+            """
+
+            def __init__(self, snake_length: int = 5, board_width: int = 240, board_height: int = 180):
                 pass
 
             @abstractmethod
-            def gcd(self, nums: list[int]) -> int:
-                """Returns the largest positive integer that can divide each of input numbers without a remainder."""
+            def tick(self, snake_direction: int = 0) -> int:
+                """Advances the state of the board, e.g. moves the snake 1 spot in the given direction.
+                
+                Directions are 0 for down, 1 for left, 2 for up and 3 for right.
+                """
+                pass
+
+            @abstractmethod
+            def get_snake_state(self) -> list[tuple[int, int]]:
+                """Returns a list of positions of the board on which to draw the snake.."""
                 pass
         ''')
-
 
     filename_prefix = camel_to_snake(example_interface_classname)
     project_dir = os.path.join('output', project_id)
@@ -102,8 +131,9 @@ def main():
     test_path = os.path.join(project_dir, filename_prefix + '_test.py')    
     impl_path = os.path.join(project_dir, filename_prefix + '_impl.py')
 
-    test_gen = test_generator.TestGenerator()
-    impl_gen = impl_generator.ImplGenerator()
+    model = 'claude-3-5-sonnet-latest'
+    test_gen = test_generator.TestGenerator(model_str=model)
+    impl_gen = impl_generator.ImplGenerator(model_str=model)
 
     with open(iface_path, 'w') as iface_file:
         iface_file.write(example_interface)
@@ -115,8 +145,8 @@ def main():
     if not tests_pass:
         print(test_output)
 
-    num_test_rounds = 3
-    num_impl_rounds = 5
+    num_test_rounds = 10
+    num_impl_rounds = 3
     while not tests_pass and num_test_rounds > 0:
         while not tests_pass and num_impl_rounds > 0:
             print('Tests did not pass, trying another round of impl generation.')
