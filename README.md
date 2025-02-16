@@ -12,7 +12,7 @@ python -m venv .
 pip install -r requirements.txt
 ```
 
-Add API keys to .env, e.g.:
+Add API keys to `.env`, e.g.:
 
 ```
 OPENAI_API_KEY=<secret>
