@@ -65,10 +65,10 @@ class ImplGenerator:
             f'{utils.wrap_code_in_markdown(prior_attempts[-1].code)}'
             'Your instructions were to make sure the name of the class ends with "Impl", and it inherits from the interface. '
             'You can assume the interface exists the same directory as the implementation being generated. '
-            'The test suite that was run looks like this:\n'
+            'The test suite that was run looks like this:\n\n'
             f'{utils.wrap_code_in_markdown(test_str)}'
             'When the tests were run, the following output indicates some problems:'
-            f'```\n{prior_attempts[-1].errors}\n\n'
+            f'```\n{prior_attempts[-1].errors}\n```\n\n'
             'Please generate a new implementation according to the same instructions, '
             'and make sure the problems are addressed so that all tests pass.'
         )

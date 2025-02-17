@@ -1,12 +1,13 @@
-import os
-import re
-import textwrap
-import unittest
-from dotenv import load_dotenv
 from agents import impl_generator
 from agents import test_generator
-import py_compile
 from dataclasses import dataclass
+from dotenv import load_dotenv
+import os
+import py_compile
+import sys
+import textwrap
+import unittest
+import logfire
 
 
 @dataclass
@@ -32,7 +33,7 @@ math_utils = Example(
             def gcd(self, nums: list[int]) -> int:
                 """Returns the largest positive integer that can divide each of input numbers without a remainder."""
                 pass
-    ''')
+        ''')
 )
 
 calculator = Example(
@@ -40,7 +41,7 @@ calculator = Example(
     filename = 'calculator.py',
     code = textwrap.dedent('''
         from abc import ABC, abstractmethod
-`       class Calculator(ABC):
+        class Calculator(ABC):
             @abstractmethod
             def add(a: int, b: int) -> int:
                 """Adds a and b"""
@@ -54,8 +55,8 @@ calculator = Example(
             @abstractmethod
             def product(a: int, b: int) -> int:
                 """Returns the product of a and b"""
-                pass`
-    ''')
+                pass
+        ''')
 )
 
 microblog_dao = Example(
@@ -74,7 +75,7 @@ microblog_dao = Example(
             def delete_post(self, post_id: str) -> None:
                 """Deletes the given post. Raises ValueError if post is not found."""
                 pass
-    ''')
+        ''')
 )
 
 # This is a more difficult example, but really fun to try!
@@ -107,7 +108,7 @@ snake_game_engine = Example(
             def get_snake_state(self) -> list[tuple[int, int]]:
                 """Returns a list of positions of the board on which to draw the snake.."""
                 pass
-    ''')
+        ''')
 )
 
 def run_tests(start_dir: str) -> tuple[bool, str]:
@@ -141,11 +142,20 @@ def try_compile_file(code_file: str) -> str:
         return str(e)
 
 
-def main():
+def main(example_name: str):
     load_dotenv()
+    logfire.configure()
 
-    # Switch this out with whatever example you want, or your own!
-    example: Example = math_utils
+    if example_name == 'math':
+        example = math_utils
+    elif example_name == 'microblog':
+        example = microblog_dao
+    elif example_name == 'calculator':
+        example = calculator
+    elif example_name == 'snake':
+        example = snake_game_engine
+    else:
+        print(f'Unknown example `{example_name}`. Valid ones: math, microblog, calculator, snake')
 
     project_dir = os.path.join('output', example.project_name)
     os.makedirs(project_dir, exist_ok=True)
@@ -154,7 +164,7 @@ def main():
     test_path = os.path.join(project_dir, example.filename.replace('.py', '_test.py'))
     impl_path = os.path.join(project_dir, example.filename.replace('.py', '_impl.py'))
 
-    model = 'claude-3-5-sonnet-latest'
+    model = 'openai:gpt-4o'
     test_gen = test_generator.TestGenerator(model_str=model)
     impl_gen = impl_generator.ImplGenerator(model_str=model)
 
@@ -183,10 +193,7 @@ def main():
         while not tests_pass and num_impl_rounds > 0:
             print('Tests did not pass, trying another round of impl generation.')
             impl_attempts.append(impl_generator.GenerationAttempt(impl_str, test_output))
-            new_impl_str = impl_gen.str_to_str(example.code, test_str, impl_attempts)
-            with open(impl_path, 'w') as impl_file:
-                impl_file.write(new_impl_str)
-
+            impl_str = impl_gen.str_to_file(example.code, impl_path, test_str, impl_attempts)
             tests_pass, test_output = run_tests(project_dir)
             num_impl_rounds -= 1
         
@@ -208,4 +215,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    else:
+        main('math')

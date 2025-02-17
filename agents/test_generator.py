@@ -61,7 +61,7 @@ s
             'Never include the interface or the implementation itself in the output, these will be provided for you. '
             'Your previous attempt failed. You generated the following test: '
             f'{utils.wrap_code_in_markdown(prior_attempts[-1].code)}'
-            'And this caused the following error:\n'
+            'And this caused the following error:\n\n'
             f'```\n{prior_attempts[-1].errors}\n```\n\n'
             'Please try again, trying to fix the above errors. The code that is being tested is as follows:\n\n'
             f'{utils.wrap_code_in_markdown(python_interface)}'

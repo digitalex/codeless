@@ -25,9 +25,9 @@ Note that the code by default uses Anthropic - you can change it in start.py.
 
 ## Quick demo
 
-1. Run `demo.py`.
+1. Run `python demo.py`.
 2. Say 'wow!'
-3. Edit demo.py to try some other examples.
+3. Try some more, e.g. `python demo.py microblog`, or `python demo.py snake`.
 4. Tell all your friends.
 
 
