@@ -23,6 +23,14 @@ ANTHROPIC_API_KEY=<secret>
 
 Note that the code by default uses Anthropic - you can change it in start.py.
 
+## Quick demo
+
+1. Run `demo.py`.
+2. Say 'wow!'
+3. Edit demo.py to try some other examples.
+4. Tell all your friends.
+
+
 ## Using with IDE
 
 In your favorite IDE, open a terminal window and start the listener:
