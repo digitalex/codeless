@@ -56,7 +56,7 @@ Codeless will now create a test file. Open it in your IDE (for the example, it'l
 
 Look at the test. If you're happy with it, let Codeless continue again by hitting enter.
 
-Codeless will now iterate on an implementation that passes the tests. It'll tell you when it's done.
+Codeless will now iterate on an implementation that passes the tests. It'll tell you when it's done. This is the magic moment!
 
 ### What's next?
 
