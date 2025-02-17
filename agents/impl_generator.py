@@ -13,7 +13,7 @@ class GenerationAttempt:
 
 class ImplGenerator:
 
-    def __init__(self, model_str: str | None = None):
+    def __init__(self, model_str: str = ''):
         """Model strings supported: 'openai:gpt-4o' and 'google-gla:gemini-1.5-flash'"""
         self._impl_creator_agent = Agent(
             model_str or 'openai:gpt-4o',
