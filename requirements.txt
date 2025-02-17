@@ -1,3 +1,4 @@
 pydantic-ai[logfire]
 fastapi[standard]
+watchdog
 

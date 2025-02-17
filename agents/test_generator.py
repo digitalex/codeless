@@ -1,8 +1,15 @@
+import asyncio
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
 from . import utils
+from dataclasses import dataclass
 
+
+@dataclass(frozen=True)
+class GenerationAttempt:
+    code: str
+    errors: str
 
 class TestGenerator:
 
@@ -15,7 +22,7 @@ class TestGenerator:
                 'The tests should follow best practices, use the standard python `unittest` library.')  
         )
 
-    def _make_prompt(self, python_interface: str) -> str:
+    def _make_initial_prompt(self, python_interface: str) -> str:
         example_test = textwrap.dedent('''
             import unittest
             from my_interface import MyInterface
@@ -37,7 +44,6 @@ s
             'The test suite should be a class that inherits from `unittest.TestCase`, '
             'and can assume an implementation of the interface already exists, and it is in the same directory as the test being generated. '
             'The `setUp` method always instantiates an implementation of the interface. '
-            # 'Interface: `example.Example`. Impl: `example_impl.ExampleImpl`. '
             'Never include the interface or the implementation itself in the output, these will be provided for you. '
             'Here is an example output for a hypothetical interface called `MyInterface`:\n'
             f'{utils.wrap_code_in_markdown(example_test)}'
@@ -46,13 +52,31 @@ s
             f'{utils.wrap_code_in_markdown(python_interface)}'
         )
 
-    def str_to_str(self, python_interface: str) -> str:
+    def _make_improvement_prompt(self, python_interface: str, prior_attempts: list[GenerationAttempt] = []) -> str:
+        return (
+            'Generate a test suite for the following code. '
+            'The test suite should be a class that inherits from `unittest.TestCase`, '
+            'and can assume an implementation of the interface already exists, and it is in the same directory as the test being generated. '
+            'The `setUp` method always instantiates an implementation of the interface. '
+            'Never include the interface or the implementation itself in the output, these will be provided for you. '
+            'Your previous attempt failed. You generated the following test: '
+            f'{utils.wrap_code_in_markdown(prior_attempts[-1].code)}'
+            'And this caused the following error:\n'
+            f'```\n{prior_attempts[-1].errors}\n```\n\n'
+            'Please try again, trying to fix the above errors. The code that is being tested is as follows:\n\n'
+            f'{utils.wrap_code_in_markdown(python_interface)}'
+        )
+
+    def str_to_str(self, python_interface: str, prior_attempts: list[GenerationAttempt] = []) -> str:
         """Returns the test implementation code."""
-        prompt = self._make_prompt(python_interface)
-        result = self._test_creator_agent.run_sync(prompt)
+        if prior_attempts:
+            prompt = self._make_improvement_prompt(python_interface, prior_attempts)
+        else:
+            prompt = self._make_initial_prompt(python_interface)
+        result = asyncio.run(self._test_creator_agent.run(prompt))
         return utils.extract_code(result.data)
 
-    def str_to_file(self, interface_str: str, output_path: str) -> str:
+    def str_to_file(self, interface_str: str, output_path: str, prior_attempts: list[GenerationAttempt] = []) -> str:
         test_str = self.str_to_str(interface_str)
         with open(output_path, 'w') as output_file:
             output_file.write(test_str)

@@ -1,7 +1,14 @@
+import asyncio
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
 from . import utils
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class GenerationAttempt:
+    code: str
+    errors: str
 
 
 class ImplGenerator:
@@ -38,7 +45,7 @@ class ImplGenerator:
             f'{utils.wrap_code_in_markdown(example_impl)}'
         )
 
-    def _make_improvement_prompt(self, python_interface: str, test_str: str, previous_impl: str, test_output: str) -> str:
+    def _make_improvement_prompt(self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []) -> str:
         example_impl = textwrap.dedent('''
             from my_interface import MyInterface
 
@@ -55,29 +62,29 @@ class ImplGenerator:
             'You were previously asked to generate an implementation of the following python interface:\n\n'
             f'{utils.wrap_code_in_markdown(python_interface)}'
             'Your response was as follows:\n\n'
-            f'{utils.wrap_code_in_markdown(previous_impl)}'
+            f'{utils.wrap_code_in_markdown(prior_attempts[-1].code)}'
             'Your instructions were to make sure the name of the class ends with "Impl", and it inherits from the interface. '
             'You can assume the interface exists the same directory as the implementation being generated. '
             'The test suite that was run looks like this:\n'
             f'{utils.wrap_code_in_markdown(test_str)}'
             'When the tests were run, the following output indicates some problems:'
-            f'```\n{test_output}\n\n'
+            f'```\n{prior_attempts[-1].errors}\n\n'
             'Please generate a new implementation according to the same instructions, '
             'and make sure the problems are addressed so that all tests pass.'
         )
 
-    def str_to_str(self, python_interface: str, previous_impl:str | None = None, test_str: str | None = None, feedback: str | None = None) -> str:
+    def str_to_str(self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []) -> str:
         """Returns the test implementation code."""
-        if previous_impl and feedback:
-            prompt = self._make_improvement_prompt(python_interface, test_str, previous_impl, feedback)
+        if prior_attempts:
+            prompt = self._make_improvement_prompt(python_interface, test_str, prior_attempts)
         else:
             prompt = self._make_initial_prompt(python_interface)
 
-        result = self._impl_creator_agent.run_sync(prompt)
+        result = asyncio.run(self._impl_creator_agent.run(prompt))
         return utils.extract_code(result.data)
 
-    def str_to_file(self, interface_str: str, output_path: str, previous_impl:str | None = None, test_str: str | None = None, feedback: str | None = None) -> str:
-        impl_str = self.str_to_str(interface_str, test_str=test_str, previous_impl=previous_impl, feedback=feedback)
+    def str_to_file(self, interface_str: str, output_path: str, test_str: str, prior_attempts: list[GenerationAttempt] = []) -> str:
+        impl_str = self.str_to_str(interface_str, test_str, prior_attempts)
         with open(output_path, 'w') as output_file:
             output_file.write(impl_str)
         return impl_str

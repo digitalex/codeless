@@ -5,6 +5,7 @@ import unittest
 from dotenv import load_dotenv
 from agents import impl_generator
 from agents import test_generator
+import py_compile
 
 def camel_to_snake(input: str) -> str:
     return re.sub(r'(?<!^)(?=[A-Z])', '_', input).lower()
@@ -30,6 +31,14 @@ def run_tests(start_dir: str) -> tuple[bool, str]:
                 output.append(f"  Failure: {fail}")
 
         return False, '\n'.join(output)
+
+
+def try_compile_file(code_file: str) -> str:
+    try:
+        py_compile.compile(code_file, doraise=True)
+        return ''
+    except py_compile.PyCompileError as e:
+        return str(e)
 
 
 def main():
@@ -137,6 +146,10 @@ def main():
 
     with open(iface_path, 'w') as iface_file:
         iface_file.write(example_interface)
+
+    if compilation_error := try_compile_file(iface_path):
+        print(f'Your interface file has errors: {compilation_error}')
+        return
 
     test_str = test_gen.str_to_file(example_interface, test_path)
     impl_str = impl_gen.str_to_file(example_interface, impl_path)
