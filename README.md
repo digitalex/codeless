@@ -44,7 +44,7 @@ class MathUtils(ABC):
 
     @abstractmethod
     def gcd(self, nums: list[int]) -> int:
-	"""Returns the largest positive integer that can divide each of input numbers without a remainder."""
+	"""Returns the largest positive integer that can divide all the input numbers without a remainder."""
 	pass
 ```
 
