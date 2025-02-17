@@ -8,8 +8,9 @@ Set up environment:
 ```bash
 git clone https://github.com/digitalex/codeless.git
 cd codeless
-python -m venv .
-pip install -r requirements.txt
+python3 -m venv .
+source bin/activate
+pip3 install -r requirements.txt
 ```
 
 Add API keys to `.env`, e.g.:
