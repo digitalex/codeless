@@ -21,6 +21,8 @@ GEMINI_API_KEY=<secret>
 ANTHROPIC_API_KEY=<secret>
 ```
 
+Note that the code by default uses Anthropic - you can change it in start.py.
+
 ## Using with IDE
 
 In your favorite IDE, open a terminal window and start the listener:
