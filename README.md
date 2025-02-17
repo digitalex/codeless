@@ -1,5 +1,5 @@
-# Codeless AI
-Write systems, not code
+# Codeless AI -- Write systems, not code
+Codeless is to to Python code what a compiler is to machine code. You write the interface, you approve the tests, the AI writes the implementation. You should not have to ever look at the implementation, just like you should never have to inspect the machine code produced by a compiler. If the tests pass, why ever look at the code? Uncertain that the code is correct? Write more tests!
 
 ## Getting started
 
@@ -31,7 +31,7 @@ python start.py my-first-project
 
 This will listen to new interface files in ./output/my-first-project/.
 
-Next, create an interface file, for instance:
+Next, create an interface file, for instance `output/my-first-project/math_utils.py`.
 
 ```python
 from abc import ABC, abstractmethod
