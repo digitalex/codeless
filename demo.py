@@ -116,7 +116,7 @@ def run_tests(start_dir: str) -> tuple[bool, str]:
     runner = unittest.TextTestRunner(verbosity=2)
     result: unittest.TextTestResult = runner.run(test_suite)
     if result.wasSuccessful():
-        return True, ''
+        return True, 'All tests pass!'
     else:
         output = []
         if result.errors:
