@@ -21,7 +21,7 @@ GEMINI_API_KEY=<secret>
 ANTHROPIC_API_KEY=<secret>
 ```
 
-Note that the code by default uses Anthropic - you can change it in start.py.
+Note that the code by default uses OpenAI (o4) - you can change it in start.py.
 
 ## Quick demo
 
