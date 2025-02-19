@@ -31,7 +31,7 @@ class TestGenerator:
             class MyInterfaceTest(unittest.TestCase):
                 def setUp(self):
                     self._my_interface: MyInterface = MyInterfaceImpl()
-s
+
                 def test_foo_returns_empty_for_empty_input(self):
                     self.assertEmpty(self._my_interface_impl.foo(''))
 
@@ -42,9 +42,9 @@ s
         return (
             'Generate a test suite for the following code. '
             'The test suite should be a class that inherits from `unittest.TestCase`, '
-            'and can assume an implementation of the interface already exists, and it is in the same directory as the test being generated. '
-            'The `setUp` method always instantiates an implementation of the interface. '
-            'Never include the interface or the implementation itself in the output, these will be provided for you. '
+            'and you should assume both the implementation and the interface already exists, '
+            'and they are both in the same directory as the test being generated. '
+            'The `setUp` method always instantiates an implementation of the interface.\n'
             'Here is an example output for a hypothetical interface called `MyInterface`:\n'
             f'{utils.wrap_code_in_markdown(example_test)}'
             'Now generate a test suite in the same style, for testing the interface provided below '
@@ -56,9 +56,9 @@ s
         return (
             'Generate a test suite for the following code. '
             'The test suite should be a class that inherits from `unittest.TestCase`, '
-            'and can assume an implementation of the interface already exists, and it is in the same directory as the test being generated. '
-            'The `setUp` method always instantiates an implementation of the interface. '
-            'Never include the interface or the implementation itself in the output, these will be provided for you. '
+            'and you should assume both the implementation and the interface already exists, '
+            'and they are both in the same directory as the test being generated. '
+            'The `setUp` method always instantiates an implementation of the interface.\n'
             'Your previous attempt failed. You generated the following test: '
             f'{utils.wrap_code_in_markdown(prior_attempts[-1].code)}'
             'And this caused the following error:\n\n'
