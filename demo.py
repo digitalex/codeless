@@ -144,7 +144,10 @@ def try_compile_file(code_file: str) -> str:
 
 def main(example_name: str):
     load_dotenv()
-    logfire.configure()
+    try:
+        logfire.configure()
+    except:
+        print("Couldn't configure logfire, please check your environment variables.")
 
     if example_name == 'math':
         example = math_utils

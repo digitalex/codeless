@@ -23,9 +23,9 @@ ANTHROPIC_API_KEY=<secret>
 
 Note that the code by default uses OpenAI (o4) - you can change it in start.py.
 
-Now, set up Logfire:
+If you'd like to set up Logfire, do the following:
 
-### Logfire Initialization
+### Logfire Setup (optional)
 
 Run the following command and follow the instructions to log in via the browser:
 ```bash
