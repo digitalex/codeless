@@ -27,28 +27,13 @@ If you'd like to set up Logfire, do the following:
 
 ## Logfire Setup (optional)
 
-Run the following command and follow the instructions to log in via the browser:
-```bash
-logfire auth
+1. Follow [the official documentation](https://logfire.pydantic.dev/docs/how-to-guides/create-write-tokens/) on how to create a logfire token.
+2. Add it to `.env`:
+
+```
+LOGFIRE_TOKEN=<my new token>
 ```
 
-### Create a Logfire Project
-- Go to [Logfire](https://logfire.pydantic.dev) and **create a new project**.
-- If you already have a project, list available ones:
-  ```bash
-  logfire projects list
-  ```
-- Select a project:
-  ```bash
-  logfire projects use <your-project-name>
-  ```
-
-### Set Up a Logfire Write Token
-- Inside your project settings, generate a **write token**.
-- Export the token as an environment variable:
-  ```bash
-  export LOGFIRE_TOKEN=<your-logfire-write-token>
-  ```
 
 ## Quick demo
 
