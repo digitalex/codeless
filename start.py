@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 from enum import Enum
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+import logfire
 import os
 import py_compile
 import sys
@@ -141,6 +142,7 @@ class ProjectEventHandler(FileSystemEventHandler):
 
 def main(project_id: str):
     load_dotenv()
+    logfire.configure(send_to_logfire='if-token-present')
     project_dir = os.path.join('output', project_id)
     os.makedirs(project_dir, exist_ok=True)
     model = 'claude-3-5-sonnet-latest'

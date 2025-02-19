@@ -145,7 +145,7 @@ def try_compile_file(code_file: str) -> str:
 def main(example_name: str):
     load_dotenv()
     try:
-        logfire.configure()
+        logfire.configure(send_to_logfire='if-token-present')
     except:
         print("Couldn't configure logfire, please check your environment variables.")
 
