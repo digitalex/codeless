@@ -108,7 +108,7 @@ class ProjectEventHandler(FileSystemEventHandler):
             print(f'File created: {event.src_path}')
             kind = guess_file_kind(event.src_path)
             if kind == FileKind.IFACE:
-                input(f"Interface file {event.src_path} detected. Press Enter to continue...")
+                input(f"Interface file {event.src_path} detected. Press Enter to continue generating tests.")
                 if compilation_errors := try_compile_file(event.src_path):
                     print(f'Your interface file has errors: {compilation_errors}')
                 else:
@@ -122,13 +122,13 @@ class ProjectEventHandler(FileSystemEventHandler):
                 if compilation_errors := try_compile_file(event.src_path):
                     print(f'Your interface file has errors: {compilation_errors}')
                 else:
-                    input(f"Interface file {event.src_path} change detected. Press Enter to continue...")
+                    input(f"Interface file {event.src_path} change detected. Press Enter to continue generating tests.")
                     self.test_iteration_loop(event.src_path)
             if kind == FileKind.TEST:
                 if compilation_error := try_compile_file(event.src_path):
                     print(f'Test file {event.src_path} has errors: {compilation_error}')
                 else:
-                    input(f"Test file {event.src_path} change detected. Press Enter to continue...")
+                    input(f"Test file {event.src_path} change detected. Press Enter to continue implementing the interface.")
                     iface_path = event.src_path.replace('_impl.py', '.py')
                     self.impl_iteration_loop(iface_path, event.src_path)
 
