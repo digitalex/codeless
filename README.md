@@ -23,6 +23,33 @@ ANTHROPIC_API_KEY=<secret>
 
 Note that the code by default uses OpenAI (o4) - you can change it in start.py.
 
+Now, set up Logfire:
+
+### Logfire Initialization
+
+Run the following command and follow the instructions to log in via the browser:
+```bash
+logfire auth
+```
+
+### Create a Logfire Project
+- Go to [Logfire](https://logfire.pydantic.dev) and **create a new project**.
+- If you already have a project, list available ones:
+  ```bash
+  logfire projects list
+  ```
+- Select a project:
+  ```bash
+  logfire projects use <your-project-name>
+  ```
+
+### Set Up a Logfire Write Token
+- Inside your project settings, generate a **write token**.
+- Export the token as an environment variable:
+  ```bash
+  export LOGFIRE_TOKEN=<your-logfire-write-token>
+  ```
+
 ## Quick demo
 
 1. Run `python demo.py`.
