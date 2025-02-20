@@ -1,5 +1,7 @@
 # Codeless AI -- Write systems, not code
-Codeless is to to Python code what a compiler is to machine code. You write the interface, you approve the tests, the AI writes the implementation. You should never have to look at the implementation any more than you have to inspect the machine code produced by a compiler. If the tests pass, why ever look at the code? Uncertain that the code is correct? Write more tests!
+Codeless is to to Python code what a compiler is to machine code. You write the interface, you approve the tests, the AI writes the implementation.
+
+You should never have to look at the implementation any more than you have to inspect the machine code produced by a compiler. If the tests pass, why ever look at the code? Uncertain that the code is correct? Write more tests!
 
 ## Getting started
 
@@ -82,4 +84,4 @@ Codeless will now iterate on an implementation that passes the tests. It'll tell
 
 You can add to the interface, or the tests, or both. Watch the terminal window to allow codeless to improve the implementation.
 
-Tip: Try prompting your favorite IDE to design the subsystem for you. Tell it to make an abstract python class.
+Tip: Try prompting your favorite AI to design the subsystem for you. Tell it to make an abstract python class.
