@@ -2,7 +2,7 @@ import asyncio
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
-from . import utils
+import utils
 import dataclasses
 
 @dataclasses.dataclass(frozen=True)
