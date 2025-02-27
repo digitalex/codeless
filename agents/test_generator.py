@@ -3,13 +3,19 @@ from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
 from . import utils
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
 class GenerationAttempt:
     code: str
     errors: str
+
+
+@dataclass(frozen=True)
+class TestGenerationRequest:
+    interface_str: str
+    prior_attempts: list[GenerationAttempt] = field(default_factory=list)
 
 
 class TestGenerator:
@@ -72,21 +78,18 @@ class TestGenerator:
             f'{utils.wrap_code_in_markdown(python_interface)}'
         )
 
-    def str_to_str(
-            self, python_interface: str, prior_attempts: list[GenerationAttempt] = []
-    ) -> str:
+    def str_to_str(self, request: TestGenerationRequest) -> str:
         """Returns the test implementation code."""
-        if prior_attempts:
-            prompt = self._make_improvement_prompt(python_interface, prior_attempts)
+        if request.prior_attempts:
+            prompt = self._make_improvement_prompt(request.interface_str, request.prior_attempts)
         else:
-            prompt = self._make_initial_prompt(python_interface)
+            prompt = self._make_initial_prompt(request.interface_str)
         result = asyncio.run(self._test_creator_agent.run(prompt))
         return utils.extract_code(result.data)
 
-    def str_to_file(
-            self, interface_str: str, output_path: str, prior_attempts: list[GenerationAttempt] = []
-    ) -> str:
-        test_str = self.str_to_str(interface_str, prior_attempts)
+    def str_to_file(self, request: TestGenerationRequest, output_path: str) -> str:
+        """Generates test code and writes it to a file."""
+        test_str = self.str_to_str(request)
         with open(output_path, 'w') as output_file:
             output_file.write(test_str)
         return test_str
@@ -115,4 +118,5 @@ if __name__ == "__main__":
                 pass
         ''')
 
-    print(TestGenerator().str_to_str(example_interface))
+    request = TestGenerationRequest(interface_str=example_interface)
+    print(TestGenerator().str_to_str(request))

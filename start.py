@@ -82,10 +82,12 @@ class ProjectEventHandler(FileSystemEventHandler):
             iface_str = iface_file.read()
 
         test_path = iface_path.replace('.py', '_test.py')
-        test_str = self._test_gen.str_to_file(iface_str, test_path)
+        test_request = test_generator.TestGenerationRequest(interface_str=iface_str)
+        test_str = self._test_gen.str_to_file(test_request, test_path)
         if compilation_error := try_compile_file(test_path):
             attempt = test_generator.GenerationAttempt(code=test_str, errors=compilation_error)
-            test_str = self._test_gen.str_to_file(iface_str, test_path, [attempt])
+            test_request = test_generator.TestGenerationRequest(interface_str=iface_str, prior_attempts=[attempt])
+            test_str = self._test_gen.str_to_file(test_request, test_path)
 
     def impl_iteration_loop(self, iface_path: str, test_path: str) -> None:
         """Iterates on impl creation, returning the finished file."""

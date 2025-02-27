@@ -175,8 +175,10 @@ def main(example_name: str):
         print(f'Your interface file has errors: {compilation_error}')
         return
 
-    test_str = test_gen.str_to_file(example.code, test_path)
-    impl_str = impl_gen.str_to_file(impl_generator.ImplGenerationRequest(example.code, test_str), impl_path)
+    test_request = test_generator.TestGenerationRequest(interface_str=example.code)
+    test_str = test_gen.str_to_file(test_request, test_path)
+    impl_request = impl_generator.ImplGenerationRequest(example.code, test_str)
+    impl_str = impl_gen.str_to_file(impl_request, impl_path)
     tests_pass, test_output = run_tests(project_dir)
 
     if not tests_pass:
@@ -202,7 +204,8 @@ def main(example_name: str):
 
         print('Could not make tests pass after 5 attempts, will regenerate tests instead')
         test_attempts.append(test_generator.GenerationAttempt(test_str, test_output))
-        test_str = test_gen.str_to_file(example.code, test_path, test_attempts)
+        test_request = test_generator.TestGenerationRequest(interface_str=example.code, prior_attempts=test_attempts)
+        test_str = test_gen.str_to_file(test_request, test_path)
         tests_pass, test_output = run_tests(project_dir)
         num_impl_rounds = max_impl_rounds
         num_test_rounds -= 1
