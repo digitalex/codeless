@@ -5,6 +5,7 @@ import textwrap
 from . import utils
 import dataclasses
 
+
 @dataclasses.dataclass(frozen=True)
 class GenerationAttempt:
     code: str
@@ -26,7 +27,7 @@ class ImplGenerator:
             model_str or 'openai:gpt-4o',
             system_prompt=(
                 'Your job is to implement an interface, making sure the implementation passes all the unit tests. '
-                'The implementation should be fast, memory-efficient, and as simple as possible while meeting all requirements.')  
+                'The implementation should be fast, memory-efficient, and as simple as possible while meeting all requirements.')
         )
 
     def _make_initial_prompt(self, python_interface: str, test_str: str) -> str:
@@ -48,14 +49,17 @@ class ImplGenerator:
             'Make sure the name of the class ends with "Impl", and it inherits from the interface. '
             'The code you will generate is *not* an abstract class, and does *not* have any `@abstractmethod` annotations. '
             'The interface itself already exists in the same directory, so do not add it here. '
-             'The test suite that should pass looks like this:\n\n'
+            'The test suite that should pass looks like this:\n\n'
             f'{utils.wrap_code_in_markdown(test_str)}'
             'An example implementation might look something like this:\n\n'
             f'{utils.wrap_code_in_markdown(example_impl)}'
         )
 
-    def _make_improvement_prompt(self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []) -> str:
-        example_impl = textwrap.dedent('''
+    def _make_improvement_prompt(
+            self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []
+    ) -> str:
+        # This variable is currently unused, but kept for possible future use
+        _ = textwrap.dedent('''
             from my_interface import MyInterface
 
             class MyInterfaceImpl(MyInterface):
@@ -123,4 +127,5 @@ if __name__ == "__main__":
                 pass
         ''')
 
-    print(ImplGenerator().str_to_str(example_interface))
+    request = ImplGenerationRequest(interface_str=example_interface, test_str="")
+    print(ImplGenerator().str_to_str(request))

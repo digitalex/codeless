@@ -18,9 +18,9 @@ class Example:
 
 
 math_utils = Example(
-    project_name = 'math-utils',
-    filename = 'math_utils.py',
-    code = textwrap.dedent('''
+    project_name='math-utils',
+    filename='math_utils.py',
+    code=textwrap.dedent('''
         from abc import ABC, abstractmethod
 
         class MathUtils(ABC):
@@ -37,9 +37,9 @@ math_utils = Example(
 )
 
 calculator = Example(
-    project_name = 'calculator',
-    filename = 'calculator.py',
-    code = textwrap.dedent('''
+    project_name='calculator',
+    filename='calculator.py',
+    code=textwrap.dedent('''
         from abc import ABC, abstractmethod
         class Calculator(ABC):
             @abstractmethod
@@ -60,9 +60,9 @@ calculator = Example(
 )
 
 microblog_dao = Example(
-    project_name = 'microblog-dao',
-    filename = 'microblog_dao.py',
-    code = textwrap.dedent('''
+    project_name='microblog-dao',
+    filename='microblog_dao.py',
+    code=textwrap.dedent('''
         from abc import ABC, abstractmethod
 
         class MicroblogDao(ABC):
@@ -78,18 +78,16 @@ microblog_dao = Example(
         ''')
 )
 
-# This is a more difficult example, but really fun to try!
+# This is a more difficult example, but really fun to try\!
 snake_game_engine = Example(
     project_name='snake-game-engine',
     filename='snake_game_engine.py',
-    code = textwrap.dedent('''
+    code=textwrap.dedent('''
         from abc import ABC, abstractmethod
 
         class SnakeGameEngine(ABC):
             """A game engine for the classic Snake game. This calculates the state of the board at each tick.
-            
             The board is a rectangle. There is no food for the snake, which means it will never grow.
-            
             It is assumed that the snake moves forward in its current direction at a speed of one position per tick.
             """
 
@@ -99,7 +97,6 @@ snake_game_engine = Example(
             @abstractmethod
             def tick(self, snake_direction: int = 0) -> int:
                 """Advances the state of the board, e.g. moves the snake 1 spot in the given direction.
-                
                 Directions are 0 for down, 1 for left, 2 for up and 3 for right.
                 """
                 pass
@@ -111,12 +108,13 @@ snake_game_engine = Example(
         ''')
 )
 
+
 def run_tests(start_dir: str) -> tuple[bool, str]:
     test_suite = unittest.defaultTestLoader.discover(start_dir=start_dir, pattern='*_test.py')
     runner = unittest.TextTestRunner(verbosity=2)
     result: unittest.TextTestResult = runner.run(test_suite)
     if result.wasSuccessful():
-        return True, 'All tests pass!'
+        return True, "All tests pass!"
     else:
         output = []
         if result.errors:
@@ -146,7 +144,7 @@ def main(example_name: str):
     load_dotenv()
     try:
         logfire.configure(send_to_logfire='if-token-present')
-    except:
+    except:  # noqa: E722
         print("Couldn't configure logfire, please check your environment variables.")
 
     if example_name == 'math':
@@ -162,7 +160,6 @@ def main(example_name: str):
 
     project_dir = os.path.join('output', example.project_name)
     os.makedirs(project_dir, exist_ok=True)
-    
     iface_path = os.path.join(project_dir, example.filename)
     test_path = os.path.join(project_dir, example.filename.replace('.py', '_test.py'))
     impl_path = os.path.join(project_dir, example.filename.replace('.py', '_impl.py'))
@@ -181,7 +178,7 @@ def main(example_name: str):
     test_str = test_gen.str_to_file(example.code, test_path)
     impl_str = impl_gen.str_to_file(impl_generator.ImplGenerationRequest(example.code, test_str), impl_path)
     tests_pass, test_output = run_tests(project_dir)
-    
+
     if not tests_pass:
         print(test_output)
 
@@ -200,7 +197,6 @@ def main(example_name: str):
             impl_str = impl_gen.str_to_file(impl_request, impl_path)
             tests_pass, test_output = run_tests(project_dir)
             num_impl_rounds -= 1
-        
         if tests_pass:
             break
 
@@ -211,9 +207,8 @@ def main(example_name: str):
         num_impl_rounds = max_impl_rounds
         num_test_rounds -= 1
 
-
     if num_test_rounds > 0:
-        print(f'All done! Check out the implementation at {impl_path}')
+        print(f"All done! Check out the implementation at {impl_path}")
     else:
         print(f'Unable to solve this after {max_impl_rounds * max_test_rounds} attempts.')
 

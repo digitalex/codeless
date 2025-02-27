@@ -11,7 +11,6 @@
 # 1. Impl generation/test loop.
 # 2. Notify user when done, or when giving up.
 
-import asyncio
 from agents import impl_generator
 from agents import test_generator
 from dotenv import load_dotenv
@@ -86,7 +85,7 @@ class ProjectEventHandler(FileSystemEventHandler):
         test_str = self._test_gen.str_to_file(iface_str, test_path)
         if compilation_error := try_compile_file(test_path):
             attempt = test_generator.GenerationAttempt(code=test_str, errors=compilation_error)
-            test_str = self._test_gen.str_to_file(test_path, [attempt])
+            test_str = self._test_gen.str_to_file(iface_str, test_path, [attempt])
 
     def impl_iteration_loop(self, iface_path: str, test_path: str) -> None:
         """Iterates on impl creation, returning the finished file."""
@@ -96,14 +95,16 @@ class ProjectEventHandler(FileSystemEventHandler):
             test_str = test_file.read()
 
         impl_path = iface_path.replace('.py', '_impl.py')
-        impl_str = self._impl_gen.str_to_file(iface_str, impl_path, test_str)
+        request = impl_generator.ImplGenerationRequest(iface_str, test_str)
+        impl_str = self._impl_gen.str_to_file(request, impl_path)
         tests_pass, test_output = run_tests(self._working_dir)
         attempts = []
         while not tests_pass:
             attempts.append(impl_generator.GenerationAttempt(code=impl_str, errors=test_output))
-            impl_str = self._impl_gen.str_to_file(iface_str, impl_path)
+            request = impl_generator.ImplGenerationRequest(iface_str, test_str, attempts)
+            impl_str = self._impl_gen.str_to_file(request, impl_path)
             tests_pass, test_output = run_tests(self._working_dir)
-    
+
     def on_created(self, event):
         if not event.is_directory:
             print(f'File created: {event.src_path}')
