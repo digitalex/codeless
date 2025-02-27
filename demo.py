@@ -170,7 +170,7 @@ def main(example_name: str):
 
     with open(iface_path, 'w') as iface_file:
         iface_file.write(example.code)
-    
+
     request = test_generator.TestGenerationRequest(interface_str=example.code)
     if compilation_error := try_compile_file(iface_path):
         print(f'Your interface file has errors: {compilation_error}')
