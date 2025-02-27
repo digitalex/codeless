@@ -80,6 +80,12 @@ Look at the test. If you're happy with it, let Codeless continue again by hittin
 
 Codeless will now iterate on an implementation that passes the tests. It'll tell you when it's done. This is the magic moment!
 
+## Running tests
+
+```
+pytest --ignore=agents/test_generator.py --ignore=lib
+```
+
 ### What's next?
 
 You can add to the interface, or the tests, or both. Watch the terminal window to allow codeless to improve the implementation.
