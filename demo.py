@@ -177,7 +177,9 @@ def main(example_name: str):
         return
 
     test_str = test_gen.str_to_file(request, test_path)
-    impl_str = impl_gen.str_to_file(impl_generator.ImplGenerationRequest(example.code, test_str), impl_path)
+    with open(test_path, 'r') as test_file:
+        test_code = test_file.read()
+    impl_str = impl_gen.str_to_file(impl_generator.ImplGenerationRequest(example.code, prior_attempts=[]), impl_path)
     tests_pass, test_output = run_tests(project_dir)
 
     if not tests_pass:
@@ -194,7 +196,7 @@ def main(example_name: str):
         while not tests_pass and num_impl_rounds > 0:
             print('Tests did not pass, trying another round of impl generation.')
             impl_attempts.append(impl_generator.GenerationAttempt(impl_str, test_output))
-            impl_request = impl_generator.ImplGenerationRequest(example.code, test_str, impl_attempts)
+            impl_request = impl_generator.ImplGenerationRequest(example.code, impl_attempts)
             impl_str = impl_gen.str_to_file(impl_request, impl_path)
             tests_pass, test_output = run_tests(project_dir)
             num_impl_rounds -= 1

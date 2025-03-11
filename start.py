@@ -83,27 +83,27 @@ class ProjectEventHandler(FileSystemEventHandler):
 
         test_path = iface_path.replace('.py', '_test.py')
         request = test_generator.TestGenerationRequest(interface_str=iface_str)
-        test_str = self._test_gen.str_to_file(request, test_path)
+        test_code = self._test_gen.str_to_file(request, test_path)
         if compilation_error := try_compile_file(test_path):
-            attempt = test_generator.GenerationAttempt(code=test_str, errors=compilation_error)
+            attempt = test_generator.GenerationAttempt(code=test_code, errors=compilation_error)
             request = test_generator.TestGenerationRequest(interface_str=iface_str, prior_attempts=[attempt])
-            test_str = self._test_gen.str_to_file(request, test_path)
+            test_code = self._test_gen.str_to_file(request, test_path)
 
     def impl_iteration_loop(self, iface_path: str, test_path: str) -> None:
         """Iterates on impl creation, returning the finished file."""
         with open(iface_path, 'r') as iface_file:
             iface_str = iface_file.read()
         with open(test_path, 'r') as test_file:
-            test_str = test_file.read()
+            test_code = test_file.read()
 
         impl_path = iface_path.replace('.py', '_impl.py')
-        request = impl_generator.ImplGenerationRequest(iface_str, test_str)
+        request = impl_generator.ImplGenerationRequest(iface_str, prior_attempts=[])
         impl_str = self._impl_gen.str_to_file(request, impl_path)
         tests_pass, test_output = run_tests(self._working_dir)
         attempts = []
         while not tests_pass:
             attempts.append(impl_generator.GenerationAttempt(code=impl_str, errors=test_output))
-            request = impl_generator.ImplGenerationRequest(iface_str, test_str, attempts)
+            request = impl_generator.ImplGenerationRequest(iface_str, attempts)
             impl_str = self._impl_gen.str_to_file(request, impl_path)
             tests_pass, test_output = run_tests(self._working_dir)
 
