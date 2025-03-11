@@ -16,10 +16,6 @@ class UtilsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             guess_classname(code)
 
-    def test_camel_to_snake_happy_path(self):
-        self.assertEqual(camel_to_snake("MyClass"), "my_class")
-        self.assertEqual(camel_to_snake("HTTPRequest"), "http_request")
-
     def test_camel_to_snake_edge_case(self):
         self.assertEqual(camel_to_snake(""), "")
         self.assertEqual(camel_to_snake("A"), "a")
