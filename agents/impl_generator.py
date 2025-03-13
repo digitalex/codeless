@@ -15,7 +15,6 @@ class GenerationAttempt:
 @dataclasses.dataclass(frozen=True)
 class ImplGenerationRequest:
     interface_str: str
-    test_str: str
     prior_attempts: list[GenerationAttempt] = dataclasses.field(default_factory=list)
 
 
@@ -30,7 +29,7 @@ class ImplGenerator:
                 'The implementation should be fast, memory-efficient, and as simple as possible while meeting all requirements.')
         )
 
-    def _make_initial_prompt(self, python_interface: str, test_str: str) -> str:
+    def _make_initial_prompt(self, python_interface: str, test_code: str) -> str:
         example_impl = textwrap.dedent('''
             from my_interface import MyInterface
 
@@ -50,13 +49,13 @@ class ImplGenerator:
             'The code you will generate is *not* an abstract class, and does *not* have any `@abstractmethod` annotations. '
             'The interface itself already exists in the same directory, so do not add it here. '
             'The test suite that should pass looks like this:\n\n'
-            f'{utils.wrap_code_in_markdown(test_str)}'
+            f'{utils.wrap_code_in_markdown(test_code)}'
             'An example implementation might look something like this:\n\n'
             f'{utils.wrap_code_in_markdown(example_impl)}'
         )
 
     def _make_improvement_prompt(
-            self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []
+            self, python_interface: str, test_code: str, prior_attempts: list[GenerationAttempt] = []
     ) -> str:
         # This variable is currently unused, but kept for possible future use
         _ = textwrap.dedent('''
@@ -79,7 +78,7 @@ class ImplGenerator:
             'Your instructions were to make sure the name of the class ends with "Impl", and it inherits from the interface. '
             'You can assume the interface exists the same directory as the implementation being generated. '
             'The test suite that was run looks like this:\n\n'
-            f'{utils.wrap_code_in_markdown(test_str)}'
+            f'{utils.wrap_code_in_markdown(test_code)}'
             'When the tests were run, the following output indicates some problems:'
             f'```\n{prior_attempts[-1].errors}\n```\n\n'
             'Please generate a new implementation according to the same instructions, '
