@@ -22,3 +22,8 @@ class UtilsTest(unittest.TestCase):
 
     def test_camel_to_snake_happy_path_multiple_capitals(self):
         self.assertEqual(camel_to_snake("MyClassIsReallyCool"), "my_class_is_really_cool")
+
+    def test_camel_to_snake_with_acronyms(self):
+        self.assertEqual(camel_to_snake("HTTPRequest"), "http_request")
+        self.assertEqual(camel_to_snake("URLConverter"), "url_converter")
+        self.assertEqual(camel_to_snake("HTMLParser"), "html_parser")
