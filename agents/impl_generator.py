@@ -20,9 +20,17 @@ class ImplGenerationRequest:
 
 
 class ImplGenerator:
+    """Generates implementations for given interfaces that pass provided unit tests."""
 
     def __init__(self, model_str: str = ''):
-        """Model strings supported: 'openai:gpt-4o' and 'google-gla:gemini-1.5-flash'"""
+        """
+        Initializes an ImplGenerator.
+
+        Args:
+            model_str: The model string to use for implementation generation.
+                       Supported models are 'openai:gpt-4o' and 'google-gla:gemini-1.5-flash'.
+                       Defaults to 'openai:gpt-4o'.
+        """
         self._impl_creator_agent = Agent(
             model_str or 'openai:gpt-4o',
             system_prompt=(
@@ -31,10 +39,21 @@ class ImplGenerator:
         )
 
     def _make_initial_prompt(self, python_interface: str, test_str: str) -> str:
+        """
+        Creates the initial prompt for implementation generation.
+
+        Args:
+            python_interface: The Python interface definition as a string.
+            test_str: The test suite code as a string.
+
+        Returns:
+            A string containing the initial prompt for the language model.
+        """
         example_impl = textwrap.dedent('''
             from my_interface import MyInterface
 
             class MyInterfaceImpl(MyInterface):
+                # This is an example implementation provided to the LLM to demonstrate the expected format.
                 def __init__(self, message: str):
                     super().__init__()
                     self._message = message
@@ -58,11 +77,23 @@ class ImplGenerator:
     def _make_improvement_prompt(
             self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []
     ) -> str:
+        """
+        Creates a prompt for improving an existing implementation based on test results.
+
+        Args:
+            python_interface: The Python interface definition as a string.
+            test_str: The test suite code as a string.
+            prior_attempts: A list of previous implementation attempts and their errors.
+
+        Returns:
+            A string containing the improvement prompt for the language model.
+        """
         # This variable is currently unused, but kept for possible future use
         _ = textwrap.dedent('''
             from my_interface import MyInterface
 
             class MyInterfaceImpl(MyInterface):
+                # This is an example implementation (currently unused) that could be provided to the LLM.
                 def __init__(self, message: str):
                     super().__init__()
                     self._message = message
@@ -87,7 +118,16 @@ class ImplGenerator:
         )
 
     def str_to_str(self, request: ImplGenerationRequest) -> str:
-        """Returns the test implementation code."""
+        """
+        Generates an implementation as a string.
+
+        Args:
+            request: An ImplGenerationRequest object containing the interface,
+                     test suite, and any prior attempts.
+
+        Returns:
+            A string containing the generated implementation code.
+        """
         if request.prior_attempts:
             prompt = self._make_improvement_prompt(request.interface_str, request.test_str, request.prior_attempts)
         else:
@@ -97,6 +137,18 @@ class ImplGenerator:
         return utils.extract_code(result.data)
 
     def str_to_file(self, request: ImplGenerationRequest, output_path: str) -> str:
+        """
+        Generates an implementation and writes it to a file.
+
+        Args:
+            request: An ImplGenerationRequest object containing the interface,
+                     test suite, and any prior attempts.
+            output_path: The path to the output file where the implementation
+                         should be written.
+
+        Returns:
+            A string containing the generated implementation code.
+        """
         impl_str = self.str_to_str(request)
         with open(output_path, 'w') as output_file:
             output_file.write(impl_str)
