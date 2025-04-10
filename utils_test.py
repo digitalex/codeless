@@ -22,3 +22,10 @@ class UtilsTest(unittest.TestCase):
 
     def test_camel_to_snake_happy_path_multiple_capitals(self):
         self.assertEqual(camel_to_snake("MyClassIsReallyCool"), "my_class_is_really_cool")
+
+    def test_camel_to_snake_with_acronyms(self):
+        self.assertEqual(camel_to_snake("HTTPRequest"), "http_request")
+        self.assertEqual(camel_to_snake("CustomerID"), "customer_id")
+        self.assertEqual(camel_to_snake("MyID"), "my_id")
+        self.assertEqual(camel_to_snake("SimpleXMLParser"), "simple_xml_parser")
+        self.assertEqual(camel_to_snake("APIFlagsSet"), "api_flags_set")
