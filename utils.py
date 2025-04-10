@@ -10,4 +10,4 @@ def guess_classname(code: str) -> str:
 
 
 def camel_to_snake(input: str) -> str:
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input).lower()
+    return re.sub(r'(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z])(?=[A-Z]{2,})', '_', input).lower()
