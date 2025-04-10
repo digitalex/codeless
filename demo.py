@@ -12,6 +12,13 @@ import logfire
 
 @dataclass
 class Example:
+    """Represents an example interface to be implemented.
+
+    Attributes:
+        code: The string content of the Python interface definition (using abc.ABC).
+        project_name: A short name for the project/example (used for directory naming).
+        filename: The base filename for the interface file (e.g., 'calculator.py').
+    """
     code: str
     project_name: str
     filename: str
@@ -110,6 +117,16 @@ snake_game_engine = Example(
 
 
 def run_tests(start_dir: str) -> tuple[bool, str]:
+    """Discovers and runs all unit tests (`*_test.py`) in a specified directory.
+
+    Args:
+        start_dir: The directory path where tests should be discovered.
+
+    Returns:
+        A tuple containing:
+            - bool: True if all tests passed, False otherwise.
+            - str: A summary message indicating success or detailing the errors/failures.
+    """
     test_suite = unittest.defaultTestLoader.discover(start_dir=start_dir, pattern='*_test.py')
     runner = unittest.TextTestRunner(verbosity=2)
     result: unittest.TextTestResult = runner.run(test_suite)
@@ -133,6 +150,15 @@ def run_tests(start_dir: str) -> tuple[bool, str]:
 
 
 def try_compile_file(code_file: str) -> str:
+    """Attempts to byte-compile a Python file to check for syntax errors.
+
+    Args:
+        code_file: The path to the Python file to compile.
+
+    Returns:
+        An empty string if compilation is successful, otherwise a string
+        containing the compilation error message.
+    """
     try:
         py_compile.compile(code_file, doraise=True)
         return ''
@@ -141,6 +167,16 @@ def try_compile_file(code_file: str) -> str:
 
 
 def main(example_name: str):
+    """Main function to drive the test and implementation generation process for a chosen example.
+
+    It takes an example name, loads the corresponding interface, generates tests,
+    generates an implementation, and then iteratively refines the tests and implementation
+    until the tests pass or a maximum number of attempts is reached.
+
+    Args:
+        example_name: The name of the example to run (e.g., 'math', 'calculator').
+                      Determines which `Example` instance is used.
+    """
     load_dotenv()
     try:
         logfire.configure(send_to_logfire='if-token-present')

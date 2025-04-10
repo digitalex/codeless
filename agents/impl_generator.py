@@ -8,12 +8,27 @@ import dataclasses
 
 @dataclasses.dataclass(frozen=True)
 class GenerationAttempt:
+    """Represents a single attempt at generating an implementation.
+
+    Attributes:
+        code: The generated code string for this attempt.
+        errors: A string containing any errors (e.g., test failures) from this attempt.
+    """
     code: str
     errors: str
 
 
 @dataclasses.dataclass(frozen=True)
 class ImplGenerationRequest:
+    """Represents a request to generate an implementation for a given interface.
+
+    Attributes:
+        interface_str: The string representation of the Python interface definition.
+        test_str: The string representation of the unit tests the implementation should pass.
+        prior_attempts: A list of previous GenerationAttempt objects, containing
+                        code and errors from earlier generation attempts for the same interface.
+                        Defaults to an empty list for the initial request.
+    """
     interface_str: str
     test_str: str
     prior_attempts: list[GenerationAttempt] = dataclasses.field(default_factory=list)
@@ -31,6 +46,16 @@ class ImplGenerator:
         )
 
     def _make_initial_prompt(self, python_interface: str, test_str: str) -> str:
+        """Creates the initial prompt for the AI agent to generate an implementation.
+
+        Args:
+            python_interface: The string representation of the Python interface.
+            test_str: The string representation of the unit tests.
+
+        Returns:
+            A formatted string prompt for the initial implementation generation.
+        """
+        # Example implementation provided to the AI agent for context.
         example_impl = textwrap.dedent('''
             from my_interface import MyInterface
 
@@ -58,7 +83,21 @@ class ImplGenerator:
     def _make_improvement_prompt(
             self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []
     ) -> str:
-        # This variable is currently unused, but kept for possible future use
+        """Creates a prompt for the AI agent to improve upon a previous generation attempt.
+
+        This prompt includes the original interface, tests, the previous code attempt,
+        and the errors encountered (e.g., test failures) to guide the agent.
+
+        Args:
+            python_interface: The string representation of the Python interface.
+            test_str: The string representation of the unit tests.
+            prior_attempts: A list of previous generation attempts. The last attempt
+                            is used to provide context for improvement.
+
+        Returns:
+            A formatted string prompt for generating an improved implementation.
+        """
+        # Example implementation - currently unused in this prompt but kept for potential future use.
         _ = textwrap.dedent('''
             from my_interface import MyInterface
 
