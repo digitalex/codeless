@@ -26,6 +26,17 @@ import unittest
 
 
 def run_tests(start_dir: str) -> tuple[bool, str]:
+    """Discovers and runs tests within a specified directory using unittest.
+
+    Args:
+        start_dir: The directory path from which to discover tests (files matching '*_test.py').
+
+    Returns:
+        A tuple containing:
+            - bool: True if all tests passed, False otherwise.
+            - str: A formatted string containing details of any errors or failures,
+                   or an empty string if all tests passed.
+    """
     test_suite = unittest.defaultTestLoader.discover(start_dir=start_dir, pattern='*_test.py')
     runner = unittest.TextTestRunner(verbosity=2)
     result: unittest.TextTestResult = runner.run(test_suite)
@@ -49,6 +60,17 @@ def run_tests(start_dir: str) -> tuple[bool, str]:
 
 
 def try_compile_file(code_file: str) -> str:
+    """Attempts to compile a given Python source file.
+
+    Uses `py_compile.compile` to check for syntax errors.
+
+    Args:
+        code_file: The path to the Python file to compile.
+
+    Returns:
+        An empty string if the compilation is successful.
+        The error message string from PyCompileError if compilation fails.
+    """
     try:
         py_compile.compile(code_file, doraise=True)
         return ''
