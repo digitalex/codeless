@@ -2,4 +2,4 @@ pydantic-ai[logfire]
 fastapi[standard]
 watchdog
 pytest
-
+pylint
