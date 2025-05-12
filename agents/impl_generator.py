@@ -3,10 +3,7 @@ from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
 from . import utils
-from .models import GenerationAttempt, ImplGenerationRequest # Import Pydantic models
-
-# Removed dataclass definitions for GenerationAttempt and ImplGenerationRequest
-# Removed import dataclasses
+from .models import GenerationAttempt, ImplGenerationRequest
 
 class ImplGenerator:
 
