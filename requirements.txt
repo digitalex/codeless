@@ -5,3 +5,4 @@ pytest
 modelcontextprotocol
 uvicorn[standard]
 fastapi
+pydantic

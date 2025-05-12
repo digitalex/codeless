@@ -1,6 +1,6 @@
 from agents import impl_generator
 from agents import test_generator
-from dataclasses import dataclass
+from pydantic import BaseModel # Import BaseModel for Pydantic
 from dotenv import load_dotenv
 import os
 import py_compile
@@ -10,12 +10,13 @@ import unittest
 import logfire
 
 
-@dataclass
-class Example:
+# Define the Pydantic model Example
+class Example(BaseModel):
     code: str
     project_name: str
     filename: str
 
+# Removed old dataclass Example definition
 
 math_utils = Example(
     project_name='math-utils',

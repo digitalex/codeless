@@ -3,20 +3,10 @@ from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
 from . import utils
-from dataclasses import dataclass, field
+from .models import GenerationAttempt, TestGenerationRequest # Import Pydantic models
 
-
-@dataclass(frozen=True)
-class GenerationAttempt:
-    code: str
-    errors: str
-
-
-@dataclass(frozen=True)
-class TestGenerationRequest:
-    interface_str: str
-    prior_attempts: list[GenerationAttempt] = field(default_factory=list)
-
+# Removed dataclass definitions for GenerationAttempt and TestGenerationRequest
+# Removed import for dataclasses
 
 class TestGenerator:
 
