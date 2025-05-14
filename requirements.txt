@@ -6,3 +6,4 @@ modelcontextprotocol
 uvicorn[standard]
 fastapi
 pydantic
+fastmcp
