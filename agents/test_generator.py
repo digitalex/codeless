@@ -5,6 +5,7 @@ import textwrap
 from . import utils
 from .models import GenerationAttempt, TestGenerationRequest
 
+
 class TestGenerator:
 
     def __init__(self, model_str: str = ''):

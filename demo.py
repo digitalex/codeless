@@ -1,6 +1,6 @@
 from agents import impl_generator
 from agents import test_generator
-from pydantic import BaseModel # Import BaseModel for Pydantic
+from pydantic import BaseModel  # Import BaseModel for Pydantic
 from dotenv import load_dotenv
 import os
 import py_compile
@@ -15,6 +15,7 @@ class Example(BaseModel):
     code: str
     project_name: str
     filename: str
+
 
 # Removed old dataclass Example definition
 
