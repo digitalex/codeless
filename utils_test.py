@@ -1,6 +1,7 @@
 import unittest
 from utils import guess_classname, camel_to_snake
 
+
 class UtilsTest(unittest.TestCase):
     def test_guess_classname_happy_path(self):
         code = "class MyClass(ABC): pass"
@@ -10,7 +11,7 @@ class UtilsTest(unittest.TestCase):
         code = "def my_func(): pass"
         with self.assertRaises(ValueError):
             guess_classname(code)
-    
+
     def test_guess_classname_edge_case_lowercase(self):
         code = "class myclass(ABC): pass"
         with self.assertRaises(ValueError):

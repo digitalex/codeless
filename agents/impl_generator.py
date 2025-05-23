@@ -5,6 +5,7 @@ import textwrap
 from . import utils
 from .models import GenerationAttempt, ImplGenerationRequest
 
+
 class ImplGenerator:
 
     def __init__(self, model_str: str = ''):

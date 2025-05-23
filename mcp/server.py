@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Create an MCP server instance using FastMCP
 mcp = FastMCP("SimpleEmailServer")
 
+
 # Define the send_email tool using the decorator
 @mcp.tool()
 def send_email(to: str, subject: str, body: str) -> str:
@@ -16,6 +17,7 @@ def send_email(to: str, subject: str, body: str) -> str:
     logging.info(f"Simulating email send: to='{to}', subject='{subject}', body='{body}'")
     # In a real scenario, email sending logic would go here.
     return f"Email to {to} regarding '{subject}' logged successfully."
+
 
 @mcp.tool()
 def list_files(directory_path: str = ".") -> list[str] | str:
@@ -34,6 +36,7 @@ def list_files(directory_path: str = ".") -> list[str] | str:
     except Exception as e:
         logging.error(f"Error listing files: {e}")
         return f"Error: An unexpected error occurred: {str(e)}"
+
 
 @mcp.tool()
 def read_file_content(file_path: str) -> str:
@@ -57,6 +60,7 @@ def read_file_content(file_path: str) -> str:
     except Exception as e:
         logging.error(f"Unexpected error reading file {file_path}: {e}")
         return f"Error: An unexpected error occurred: {str(e)}"
+
 
 # Main execution block to run the server using uvicorn
 if __name__ == "__main__":
