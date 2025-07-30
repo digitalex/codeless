@@ -52,3 +52,26 @@ class UtilsTest(unittest.TestCase):
     def test_camel_to_snake_single_word(self):
         self.assertEqual(camel_to_snake("hello"), "hello")
         self.assertEqual(camel_to_snake("WORLD"), "world")
+
+    def test_guess_classname_with_object_inheritance(self):
+        code = "class MyClass(object): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_no_inheritance(self):
+        code = "class MyClass: pass"
+        with self.assertRaises(ValueError):
+            guess_classname(code)
+
+    def test_guess_classname_different_base_class(self):
+        code = "class MyClass(AnotherClass): pass"
+        with self.assertRaises(ValueError):
+            guess_classname(code)
+
+    def test_camel_to_snake_with_numbers_and_acronyms(self):
+        self.assertEqual(camel_to_snake("HTTPRequestV2"), "http_request_v2")
+
+    def test_camel_to_snake_with_number_in_middle(self):
+        self.assertEqual(camel_to_snake("MyClass1GoesHere"), "my_class1_goes_here")
+
+    def test_camel_to_snake_all_caps_and_number(self):
+        self.assertEqual(camel_to_snake("ALLCAPS1"), "allcaps1")
