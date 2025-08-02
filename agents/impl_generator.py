@@ -81,7 +81,7 @@ class ImplGenerator:
             prompt = self._make_initial_prompt(request.interface_str, request.test_str)
 
         result = asyncio.run(self._impl_creator_agent.run(prompt))
-        return utils.extract_code(result.data)
+        return utils.extract_code(result.output)
 
     def str_to_file(self, request: ImplGenerationRequest, output_path: str) -> str:
         impl_str = self.str_to_str(request)

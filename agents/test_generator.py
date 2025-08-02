@@ -75,7 +75,7 @@ class TestGenerator:
         else:
             prompt = self._make_initial_prompt(interface_str=request.interface_str)
         result = asyncio.run(self._test_creator_agent.run(prompt))
-        return utils.extract_code(result.data)
+        return utils.extract_code(result.output)
 
     def str_to_file(self, request: TestGenerationRequest, output_path: str) -> str:
         test_str = self.str_to_str(request)
