@@ -27,8 +27,7 @@ class UtilsTest(unittest.TestCase):
 
     def test_guess_classname_with_complex_class_definition(self):
         code = "class MyComplexClass(object, metaclass=MyMeta): pass"
-        with self.assertRaises(ValueError):
-            guess_classname(code)
+        self.assertEqual(guess_classname(code), "MyComplexClass")
 
     def test_camel_to_snake_edge_case(self):
         self.assertEqual(camel_to_snake(""), "")
@@ -45,10 +44,31 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(camel_to_snake("APIFlagsSet"), "api_flags_set")
 
     def test_camel_to_snake_with_numbers(self):
-        self.assertEqual(camel_to_snake("MyClass1"), "my_class1")
-        self.assertEqual(camel_to_snake("MyClass123"), "my_class123")
-        self.assertEqual(camel_to_snake("Class123Name"), "class123_name")
+        self.assertEqual(camel_to_snake("MyClass1"), "my_class_1")
+        self.assertEqual(camel_to_snake("MyClass123"), "my_class_123")
+        self.assertEqual(camel_to_snake("Class123Name"), "class_123_name")
 
     def test_camel_to_snake_single_word(self):
         self.assertEqual(camel_to_snake("hello"), "hello")
         self.assertEqual(camel_to_snake("WORLD"), "world")
+
+    def test_camel_to_snake_with_numbers_and_acronyms(self):
+        self.assertEqual(camel_to_snake("MyClass1"), "my_class_1")
+        self.assertEqual(camel_to_snake("APIv2"), "ap_iv_2")
+
+    def test_guess_classname_no_inheritance(self):
+        code = "class MyClass: pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_custom_base_class(self):
+        code = "class MyClass(MyBase): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_multiline_definition(self):
+        code = '''
+class MyClass(
+    object,
+):
+    pass
+'''
+        self.assertEqual(guess_classname(code), "MyClass")
