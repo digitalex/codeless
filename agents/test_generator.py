@@ -66,16 +66,20 @@ class TestGenerator:
             f'{utils.wrap_code_in_markdown(python_interface)}'
         )
 
-    def str_to_str(
-            self, request: TestGenerationRequest
-    ) -> str:
-        """Returns the test implementation code."""
+    async def generate_async(self, request: TestGenerationRequest) -> str:
+        """Returns the test implementation code asynchronously."""
         if request.prior_attempts:
             prompt = self._make_improvement_prompt(interface_str=request.interface_str, prior_attempts=request.prior_attempts)
         else:
             prompt = self._make_initial_prompt(interface_str=request.interface_str)
-        result = asyncio.run(self._test_creator_agent.run(prompt))
+        result = await self._test_creator_agent.run(prompt)
         return utils.extract_code(result.output)
+
+    def str_to_str(
+            self, request: TestGenerationRequest
+    ) -> str:
+        """Returns the test implementation code."""
+        return asyncio.run(self.generate_async(request))
 
     def str_to_file(self, request: TestGenerationRequest, output_path: str) -> str:
         test_str = self.str_to_str(request)

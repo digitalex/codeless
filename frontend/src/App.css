@@ -1,0 +1,54 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.app-container h1 {
+    text-align: center;
+}
+
+.editors-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* Ensure it doesn't collapse to zero width */
+  min-width: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.impl-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.error {
+    color: #ff6b6b;
+    padding: 10px;
+    background-color: rgba(255, 0, 0, 0.1);
+    border-radius: 5px;
+    text-align: center;
+}

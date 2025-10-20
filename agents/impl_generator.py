@@ -73,15 +73,19 @@ class ImplGenerator:
             'and make sure the problems are addressed so that all tests pass.'
         )
 
-    def str_to_str(self, request: ImplGenerationRequest) -> str:
-        """Returns the test implementation code."""
+    async def generate_async(self, request: ImplGenerationRequest) -> str:
+        """Returns the implementation code asynchronously."""
         if request.prior_attempts:
             prompt = self._make_improvement_prompt(request.interface_str, request.test_str, request.prior_attempts)
         else:
             prompt = self._make_initial_prompt(request.interface_str, request.test_str)
 
-        result = asyncio.run(self._impl_creator_agent.run(prompt))
+        result = await self._impl_creator_agent.run(prompt)
         return utils.extract_code(result.output)
+
+    def str_to_str(self, request: ImplGenerationRequest) -> str:
+        """Returns the implementation code."""
+        return asyncio.run(self.generate_async(request))
 
     def str_to_file(self, request: ImplGenerationRequest, output_path: str) -> str:
         impl_str = self.str_to_str(request)
