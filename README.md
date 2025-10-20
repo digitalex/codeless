@@ -41,6 +41,56 @@ LOGFIRE_TOKEN=<my new token>
 
 1. Run `python demo.py`.
 2. Say 'wow!'
+
+## Running the Web UI
+
+To run the web UI, you'll need to start both the backend server and the frontend development server.
+
+### Backend Setup
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the server:**
+   ```bash
+   python server.py
+   ```
+   The backend server will be running on `http://localhost:8000`.
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   The frontend development server will be running on `http://localhost:5173`.
+
+### Using the Convenience Script
+
+A convenience script `start_app.sh` is provided to start both the backend and frontend servers with a single command.
+
+1. **Make the script executable:**
+   ```bash
+   chmod +x start_app.sh
+   ```
+
+2. **Run the script:**
+   ```bash
+   ./start_app.sh
+   ```
+   This will start the backend server in the background and then start the frontend development server in the foreground.
 3. Try some more, e.g. `python demo.py microblog`, or `python demo.py snake`.
 4. Tell all your friends.
 
