@@ -448,7 +448,7 @@ var descriptors = {};
   "ERR_CANCELED",
   "ERR_NOT_SUPPORT",
   "ERR_INVALID_URL"
-  // eslint-disable-next-line func-names
+
 ].forEach((code) => {
   descriptors[code] = { value: code };
 });
@@ -543,7 +543,7 @@ function toFormData(obj, formData, options) {
         key = removeBrackets(key);
         arr.forEach(function each(el, index) {
           !(utils_default.isUndefined(el) || el === null) && formData.append(
-            // eslint-disable-next-line no-nested-ternary
+
             indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
             convertValue(el)
           );
