@@ -32,11 +32,14 @@ model_str = os.getenv("CODELESS_MODEL", "openai:gpt-4o")
 test_gen = TestGenerator(model_str=model_str)
 impl_gen = ImplGenerator(model_str=model_str)
 
+
 class GenerateTestsResponse(BaseModel):
     test_code: str
 
+
 class GenerateImplResponse(BaseModel):
     impl_code: str
+
 
 @app.post("/api/generate_tests", response_model=GenerateTestsResponse)
 async def generate_tests(request: TestGenerationRequest):
@@ -46,6 +49,7 @@ async def generate_tests(request: TestGenerationRequest):
     except Exception as e:
         print(f"Error generating tests: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/generate_impl", response_model=GenerateImplResponse)
 async def generate_impl(request: ImplGenerationRequest):
