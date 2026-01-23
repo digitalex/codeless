@@ -27,8 +27,7 @@ class UtilsTest(unittest.TestCase):
 
     def test_guess_classname_with_complex_class_definition(self):
         code = "class MyComplexClass(object, metaclass=MyMeta): pass"
-        with self.assertRaises(ValueError):
-            guess_classname(code)
+        self.assertEqual(guess_classname(code), "MyComplexClass")
 
     def test_camel_to_snake_edge_case(self):
         self.assertEqual(camel_to_snake(""), "")
@@ -52,3 +51,33 @@ class UtilsTest(unittest.TestCase):
     def test_camel_to_snake_single_word(self):
         self.assertEqual(camel_to_snake("hello"), "hello")
         self.assertEqual(camel_to_snake("WORLD"), "world")
+
+    def test_guess_classname_no_parentheses(self):
+        code = "class MyClass: pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_other_parent(self):
+        code = "class MyClass(Base): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_multiple_parents(self):
+        code = "class MyClass(Base1, Base2): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_with_comment(self):
+        code = "class MyClass(ABC): # This is a class\n    pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_after_comments(self):
+        code = "# Comment\n\nclass MyClass(ABC): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_camel_to_snake_already_snake(self):
+        self.assertEqual(camel_to_snake("already_snake_case"), "already_snake_case")
+
+    def test_camel_to_snake_mixed_case(self):
+        self.assertEqual(camel_to_snake("My_Mixed_Case"), "my_mixed_case")
+
+    def test_camel_to_snake_complex_numbers(self):
+        self.assertEqual(camel_to_snake("A1B2C3"), "a1_b2_c3")
+        self.assertEqual(camel_to_snake("v6Address"), "v6_address")
