@@ -81,3 +81,27 @@ class UtilsTest(unittest.TestCase):
     def test_camel_to_snake_complex_numbers(self):
         self.assertEqual(camel_to_snake("A1B2C3"), "a1_b2_c3")
         self.assertEqual(camel_to_snake("v6Address"), "v6_address")
+
+    def test_guess_classname_multiline_definition(self):
+        code = """class MyClass(
+    Base
+):
+    pass"""
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_ignore_docstring(self):
+        code = """\"\"\"\nclass FakeClass:\n\"\"\"\nclass RealClass: pass"""
+        self.assertEqual(guess_classname(code), "RealClass")
+
+    def test_camel_to_snake_with_leading_numbers(self):
+        self.assertEqual(camel_to_snake("123MyClass"), "123_my_class")
+
+    def test_camel_to_snake_with_underscores(self):
+        self.assertEqual(camel_to_snake("Already_Snake_Case"), "already_snake_case")
+        self.assertEqual(camel_to_snake("Some_CamelCase"), "some_camel_case")
+
+    def test_guess_classname_syntax_error_fallback(self):
+        # Test fallback to regex when code is not valid python
+        code = "class ValidName: # missing colon or something?" # actually this is valid if trailing
+        code = "class ValidName" # Syntax error if parsed by ast
+        self.assertEqual(guess_classname(code), "ValidName")
