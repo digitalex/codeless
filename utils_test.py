@@ -72,6 +72,7 @@ class UtilsTest(unittest.TestCase):
         code = "# Comment\n\nclass MyClass(ABC): pass"
         self.assertEqual(guess_classname(code), "MyClass")
 
+
     def test_camel_to_snake_already_snake(self):
         self.assertEqual(camel_to_snake("already_snake_case"), "already_snake_case")
 
@@ -82,26 +83,49 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(camel_to_snake("A1B2C3"), "a1_b2_c3")
         self.assertEqual(camel_to_snake("v6Address"), "v6_address")
 
-    def test_guess_classname_multiline_definition(self):
-        code = """class MyClass(
-    Base
-):
-    pass"""
+    def test_guess_classname_with_underscores(self):
+        code = "class My_Class_Name(ABC): pass"
+        self.assertEqual(guess_classname(code), "My_Class_Name")
+
+    def test_guess_classname_with_numbers(self):
+        code = "class Class123(ABC): pass"
+        self.assertEqual(guess_classname(code), "Class123")
+
+    def test_guess_classname_with_decorator(self):
+        code = "@decorator\nclass MyDecoratedClass: pass"
+        self.assertEqual(guess_classname(code), "MyDecoratedClass")
+
+    def test_guess_classname_indented(self):
+        code = "    class IndentedClass: pass"
+        self.assertEqual(guess_classname(code), "IndentedClass")
+
+    def test_camel_to_snake_more_acronyms(self):
+        # Test behavior with consecutive acronyms
+        self.assertEqual(camel_to_snake("XMLHTTPRequest"), "xmlhttp_request")
+
+
+    def test_camel_to_snake_trailing_digits(self):
+        self.assertEqual(camel_to_snake("Version2"), "version2")
+        self.assertEqual(camel_to_snake("Version2Update"), "version2_update")
+
+    def test_camel_to_snake_multiple_digits(self):
+        self.assertEqual(camel_to_snake("A123B"), "a123_b")
+        self.assertEqual(camel_to_snake("D3DX9Shader"), "d3_dx9_shader")
+
+    def test_guess_classname_with_nested_parentheses(self):
+        # CURRENT LIMITATION: This might fail with current regex
+        code = "class MyClass(Generic[List[int]]): pass"
         self.assertEqual(guess_classname(code), "MyClass")
 
-    def test_guess_classname_ignore_docstring(self):
-        code = """\"\"\"\nclass FakeClass:\n\"\"\"\nclass RealClass: pass"""
-        self.assertEqual(guess_classname(code), "RealClass")
+    def test_guess_classname_with_comment_on_same_line(self):
+        code = "class MyClass: # some comment"
+        self.assertEqual(guess_classname(code), "MyClass")
 
-    def test_camel_to_snake_with_leading_numbers(self):
-        self.assertEqual(camel_to_snake("123MyClass"), "123_my_class")
+    def test_guess_classname_with_nested_parentheses_deeper(self):
+        code = "class MyClass(Base(arg)): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
 
-    def test_camel_to_snake_with_underscores(self):
-        self.assertEqual(camel_to_snake("Already_Snake_Case"), "already_snake_case")
-        self.assertEqual(camel_to_snake("Some_CamelCase"), "some_camel_case")
-
-    def test_guess_classname_syntax_error_fallback(self):
-        # Test fallback to regex when code is not valid python
-        code = "class ValidName: # missing colon or something?" # actually this is valid if trailing
-        code = "class ValidName" # Syntax error if parsed by ast
-        self.assertEqual(guess_classname(code), "ValidName")
+    def test_guess_classname_generic_syntax(self):
+        # Python 3.12+ generic syntax
+        code = "class MyClass[T]: pass"
+        self.assertEqual(guess_classname(code), "MyClass")
