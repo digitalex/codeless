@@ -81,3 +81,25 @@ class UtilsTest(unittest.TestCase):
     def test_camel_to_snake_complex_numbers(self):
         self.assertEqual(camel_to_snake("A1B2C3"), "a1_b2_c3")
         self.assertEqual(camel_to_snake("v6Address"), "v6_address")
+
+    def test_guess_classname_with_decorator(self):
+        code = "@decorator\nclass MyClass: pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_indented(self):
+        code = "    class MyClass: pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_guess_classname_multiline(self):
+        code = "class MyClass(\n    ABC\n): pass"
+        self.assertEqual(guess_classname(code), "MyClass")
+
+    def test_camel_to_snake_with_trailing_capitals(self):
+        self.assertEqual(camel_to_snake("MyHTTP"), "my_http")
+
+    def test_camel_to_snake_consecutive_capitals(self):
+        self.assertEqual(camel_to_snake("JSONParser"), "json_parser")
+        self.assertEqual(camel_to_snake("SimpleJSONParser"), "simple_json_parser")
+
+    def test_camel_to_snake_alphanumeric(self):
+        self.assertEqual(camel_to_snake("ABC123Def"), "abc123_def")

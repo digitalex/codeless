@@ -1,6 +1,6 @@
 import re
 
-_CLASS_FINDER = re.compile(r'^\s*class\s+([A-Z][a-zA-Z0-9_]*)(?:\s*\([^)]*\))?\s*:')
+_CLASS_FINDER = re.compile(r'^\s*class\s+([A-Z][a-zA-Z0-9_]*)')
 
 
 def guess_classname(code: str) -> str:
