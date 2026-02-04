@@ -1,12 +1,11 @@
 import re
 
-_CLASS_FINDER = re.compile(r'^\s*class\s+([A-Z][a-zA-Z0-9_]*).*:')
+_CLASS_FINDER = re.compile(r'^\s*class\s+([A-Z][a-zA-Z0-9_]*)(?:\s|\(|:)', re.MULTILINE)
 
 
 def guess_classname(code: str) -> str:
-    for line in code.splitlines():
-        if match := _CLASS_FINDER.search(line):
-            return match.group(1)
+    if match := _CLASS_FINDER.search(code):
+        return match.group(1)
     raise ValueError('Cannot find classname in code. Expected a class definition like `class ClassName:`')
 
 

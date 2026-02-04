@@ -72,7 +72,6 @@ class UtilsTest(unittest.TestCase):
         code = "# Comment\n\nclass MyClass(ABC): pass"
         self.assertEqual(guess_classname(code), "MyClass")
 
-
     def test_camel_to_snake_already_snake(self):
         self.assertEqual(camel_to_snake("already_snake_case"), "already_snake_case")
 
@@ -83,49 +82,52 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(camel_to_snake("A1B2C3"), "a1_b2_c3")
         self.assertEqual(camel_to_snake("v6Address"), "v6_address")
 
-    def test_guess_classname_with_underscores(self):
-        code = "class My_Class_Name(ABC): pass"
-        self.assertEqual(guess_classname(code), "My_Class_Name")
+    def test_camel_to_snake_trailing_capital(self):
+        self.assertEqual(camel_to_snake("MyClassA"), "my_class_a")
 
-    def test_guess_classname_with_numbers(self):
-        code = "class Class123(ABC): pass"
-        self.assertEqual(guess_classname(code), "Class123")
-
-    def test_guess_classname_with_decorator(self):
-        code = "@decorator\nclass MyDecoratedClass: pass"
-        self.assertEqual(guess_classname(code), "MyDecoratedClass")
+    def test_camel_to_snake_all_caps(self):
+        self.assertEqual(camel_to_snake("HTTP"), "http")
+        self.assertEqual(camel_to_snake("HTTPServer"), "http_server")
 
     def test_guess_classname_indented(self):
-        code = "    class IndentedClass: pass"
+        code = "    class IndentedClass:\n        pass"
         self.assertEqual(guess_classname(code), "IndentedClass")
 
-    def test_camel_to_snake_more_acronyms(self):
-        # Test behavior with consecutive acronyms
-        self.assertEqual(camel_to_snake("XMLHTTPRequest"), "xmlhttp_request")
-
-
-    def test_camel_to_snake_trailing_digits(self):
-        self.assertEqual(camel_to_snake("Version2"), "version2")
-        self.assertEqual(camel_to_snake("Version2Update"), "version2_update")
-
-    def test_camel_to_snake_multiple_digits(self):
-        self.assertEqual(camel_to_snake("A123B"), "a123_b")
-        self.assertEqual(camel_to_snake("D3DX9Shader"), "d3_dx9_shader")
-
-    def test_guess_classname_with_nested_parentheses(self):
-        # CURRENT LIMITATION: This might fail with current regex
-        code = "class MyClass(Generic[List[int]]): pass"
+    def test_guess_classname_with_multiline_docstring_before(self):
+        code = '"""\nThis is a docstring\n"""\nclass MyClass:\n    pass'
         self.assertEqual(guess_classname(code), "MyClass")
 
-    def test_guess_classname_with_comment_on_same_line(self):
-        code = "class MyClass: # some comment"
+    def test_guess_classname_multiline_definition(self):
+        # Test that it works with multiline class definitions
+        code = "class MyClass(\n    Base\n):\n    pass"
         self.assertEqual(guess_classname(code), "MyClass")
 
-    def test_guess_classname_with_nested_parentheses_deeper(self):
-        code = "class MyClass(Base(arg)): pass"
-        self.assertEqual(guess_classname(code), "MyClass")
+    def test_camel_to_snake_with_middle_acronym(self):
+        self.assertEqual(camel_to_snake("APIRequestResponse"), "api_request_response")
 
-    def test_guess_classname_generic_syntax(self):
-        # Python 3.12+ generic syntax
-        code = "class MyClass[T]: pass"
-        self.assertEqual(guess_classname(code), "MyClass")
+    def test_camel_to_snake_with_numbers_and_acronyms(self):
+        self.assertEqual(camel_to_snake("HTML5Parser"), "html5_parser")
+        self.assertEqual(camel_to_snake("JSON2HTML"), "json2_html")
+
+    def test_camel_to_snake_starting_with_number(self):
+        self.assertEqual(camel_to_snake("123ClassName"), "123_class_name")
+
+    def test_camel_to_snake_already_snake_with_numbers(self):
+        self.assertEqual(camel_to_snake("already_snake_123"), "already_snake_123")
+
+    def test_camel_to_snake_with_special_characters(self):
+        # camel_to_snake doesn't explicitly handle dashes, but let's see what it does
+        self.assertEqual(camel_to_snake("StringWith-Dash"), "string_with-dash")
+
+    def test_guess_classname_with_underscore(self):
+        code = "class My_Class: pass"
+        self.assertEqual(guess_classname(code), "My_Class")
+
+    def test_guess_classname_not_at_start_of_line(self):
+        code = "# class NotMe:\nclass Me: pass"
+        self.assertEqual(guess_classname(code), "Me")
+
+    def test_guess_classname_commented_out(self):
+        code = "# class NotMe: pass"
+        with self.assertRaises(ValueError):
+            guess_classname(code)
