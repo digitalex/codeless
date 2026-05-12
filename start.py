@@ -12,7 +12,7 @@
 # 2. Notify user when done, or when giving up.
 
 from agents import impl_generator
-from agents import test_generator
+from agents import suite_generator
 from dotenv import load_dotenv
 from enum import Enum
 from watchdog.events import FileSystemEventHandler
@@ -93,7 +93,7 @@ def guess_file_kind(filename: str) -> FileKind:
 
 
 class ProjectEventHandler(FileSystemEventHandler):
-    def __init__(self, working_dir: str, test_gen: test_generator.TestGenerator, impl_gen: impl_generator.ImplGenerator):
+    def __init__(self, working_dir: str, test_gen: suite_generator.TestGenerator, impl_gen: impl_generator.ImplGenerator):
         self._test_gen = test_gen
         self._impl_gen = impl_gen
         self._working_dir = working_dir
@@ -104,11 +104,11 @@ class ProjectEventHandler(FileSystemEventHandler):
             iface_str = iface_file.read()
 
         test_path = iface_path.replace('.py', '_test.py')
-        request = test_generator.TestGenerationRequest(interface_str=iface_str)
+        request = suite_generator.TestGenerationRequest(interface_str=iface_str)
         test_str = self._test_gen.str_to_file(request, test_path)
         if compilation_error := try_compile_file(test_path):
-            attempt = test_generator.GenerationAttempt(code=test_str, errors=compilation_error)
-            request = test_generator.TestGenerationRequest(interface_str=iface_str, prior_attempts=[attempt])
+            attempt = suite_generator.GenerationAttempt(code=test_str, errors=compilation_error)
+            request = suite_generator.TestGenerationRequest(interface_str=iface_str, prior_attempts=[attempt])
             test_str = self._test_gen.str_to_file(request, test_path)
 
     def impl_iteration_loop(self, iface_path: str, test_path: str) -> None:
@@ -170,8 +170,8 @@ def main(project_id: str):
     logfire.configure(send_to_logfire='if-token-present')
     project_dir = os.path.join('output', project_id)
     os.makedirs(project_dir, exist_ok=True)
-    model = 'claude-3-5-sonnet-latest'
-    test_gen = test_generator.TestGenerator(model_str=model)
+    model = os.getenv('CODELESS_MODEL', 'claude-3-5-sonnet-latest')
+    test_gen = suite_generator.TestGenerator(model_str=model)
     impl_gen = impl_generator.ImplGenerator(model_str=model)
 
     event_handler = ProjectEventHandler(project_dir, test_gen, impl_gen)

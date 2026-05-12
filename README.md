@@ -133,7 +133,7 @@ Codeless will now iterate on an implementation that passes the tests. It'll tell
 ## Running tests
 
 ```
-pytest --ignore=agents/test_generator.py --ignore=lib
+pytest --ignore=lib
 ```
 
 ### What's next?

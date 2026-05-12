@@ -16,9 +16,9 @@ Codeless AI is a platform where users define interfaces and tests, and AI agents
 ## Running Tests
 To run the backend test suite, use the following command from the root directory:
 ```bash
-pytest --ignore=agents/test_generator.py --ignore=lib
+pytest --ignore=lib
 ```
-Note: `agents/test_generator.py` and `lib` are explicitly ignored.
+Note: `lib` is explicitly ignored.
 
 ## Running the Application
 

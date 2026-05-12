@@ -1,5 +1,5 @@
 from agents import impl_generator
-from agents import test_generator
+from agents import suite_generator
 from pydantic import BaseModel  # Import BaseModel for Pydantic
 from dotenv import load_dotenv
 import os
@@ -167,13 +167,13 @@ def main(example_name: str):
     impl_path = os.path.join(project_dir, example.filename.replace('.py', '_impl.py'))
 
     model = 'openai:gpt-4o'
-    test_gen = test_generator.TestGenerator(model_str=model)
+    test_gen = suite_generator.TestGenerator(model_str=model)
     impl_gen = impl_generator.ImplGenerator(model_str=model)
 
     with open(iface_path, 'w') as iface_file:
         iface_file.write(example.code)
 
-    request = test_generator.TestGenerationRequest(interface_str=example.code)
+    request = suite_generator.TestGenerationRequest(interface_str=example.code)
     if compilation_error := try_compile_file(iface_path):
         print(f'Your interface file has errors: {compilation_error}')
         return
@@ -204,8 +204,8 @@ def main(example_name: str):
             break
 
         print('Could not make tests pass after 5 attempts, will regenerate tests instead')
-        test_attempts.append(test_generator.GenerationAttempt(test_str, test_output))
-        request = test_generator.TestGenerationRequest(interface_str=example.code, prior_attempts=test_attempts)
+        test_attempts.append(suite_generator.GenerationAttempt(test_str, test_output))
+        request = suite_generator.TestGenerationRequest(interface_str=example.code, prior_attempts=test_attempts)
         test_str = test_gen.str_to_file(request, test_path)
         tests_pass, test_output = run_tests(project_dir)
         num_impl_rounds = max_impl_rounds

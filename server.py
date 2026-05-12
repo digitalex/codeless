@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from agents.test_generator import TestGenerator
+from agents.suite_generator import TestGenerator
 from agents.models import TestGenerationRequest, ImplGenerationRequest
 from agents.impl_generator import ImplGenerator
 from dotenv import load_dotenv
