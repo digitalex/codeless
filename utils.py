@@ -1,12 +1,15 @@
 import re
-
-_CLASS_FINDER = re.compile(r'^\s*class\s+([A-Z][a-zA-Z0-9_]*)(?:\s*\([^)]*\))?\s*:')
-
+import ast
 
 def guess_classname(code: str) -> str:
-    for line in code.splitlines():
-        if match := _CLASS_FINDER.search(line):
-            return match.group(1)
+    try:
+        tree = ast.parse(code)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                if node.name and node.name[0].isupper():
+                    return node.name
+    except SyntaxError:
+        pass
     raise ValueError('Cannot find classname in code. Expected a class definition like `class ClassName:`')
 
 
