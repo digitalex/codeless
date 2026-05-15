@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
@@ -43,20 +44,9 @@ class ImplGenerator:
         )
 
     def _make_improvement_prompt(
-            self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] = []
+            self, python_interface: str, test_str: str, prior_attempts: list[GenerationAttempt] | None = None
     ) -> str:
-        # This variable is currently unused, but kept for possible future use
-        _ = textwrap.dedent('''
-            from my_interface import MyInterface
-
-            class MyInterfaceImpl(MyInterface):
-                def __init__(self, message: str):
-                    super().__init__()
-                    self._message = message
-
-                def foo(self) -> str:
-                    return self._message
-            ''')
+        prior_attempts = prior_attempts or []
 
         return (
             'You were previously asked to generate an implementation of the following python interface:\n\n'
@@ -89,6 +79,7 @@ class ImplGenerator:
 
     def str_to_file(self, request: ImplGenerationRequest, output_path: str) -> str:
         impl_str = self.str_to_str(request)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'w') as output_file:
             output_file.write(impl_str)
         return impl_str

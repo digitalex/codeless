@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import textwrap
@@ -49,8 +50,9 @@ class TestGenerator:
         )
 
     def _make_improvement_prompt(
-            self, python_interface: str, prior_attempts: list[GenerationAttempt] = []
+            self, python_interface: str, prior_attempts: list[GenerationAttempt] | None = None
     ) -> str:
+        prior_attempts = prior_attempts or []
         return (
             'Generate a test suite for the following code. '
             'The test suite should be a class that inherits from `unittest.TestCase`, '
@@ -83,6 +85,7 @@ class TestGenerator:
 
     def str_to_file(self, request: TestGenerationRequest, output_path: str) -> str:
         test_str = self.str_to_str(request)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'w') as output_file:
             output_file.write(test_str)
         return test_str

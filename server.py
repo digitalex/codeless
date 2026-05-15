@@ -7,6 +7,10 @@ from agents.impl_generator import ImplGenerator
 from dotenv import load_dotenv
 import os
 import uvicorn
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -47,7 +51,7 @@ async def generate_tests(request: TestGenerationRequest):
         test_code = await test_gen.generate_async(request)
         return GenerateTestsResponse(test_code=test_code)
     except Exception as e:
-        print(f"Error generating tests: {e}")
+        logger.exception("Error generating tests")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -57,7 +61,7 @@ async def generate_impl(request: ImplGenerationRequest):
         impl_code = await impl_gen.generate_async(request)
         return GenerateImplResponse(impl_code=impl_code)
     except Exception as e:
-        print(f"Error generating implementation: {e}")
+        logger.exception("Error generating implementation")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
