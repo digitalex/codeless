@@ -141,3 +141,5 @@ pytest --ignore=agents/test_generator.py --ignore=lib
 You can add to the interface, or the tests, or both. Watch the terminal window to allow codeless to improve the implementation.
 
 Tip: Try prompting your favorite AI to design the subsystem for you. Tell it to make an abstract python class.
+
+Happy coding! Have fun building with Codeless AI! 👋
